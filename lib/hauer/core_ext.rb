@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-class Array  
+class Array    
   # Taken from ActiveSupport   
   def in_groups(number, fill_with = nil)
     # size / number gives minor group size;
@@ -27,4 +27,15 @@ class Array
       groups
     end
   end
+  
+  
+  # rotate clockwise (right)
+  def rotate_right!(num=1)
+    num.times{ self.unshift self.pop }
+    self
+  end
+  
+  # def rotate_right(num=1)
+  #   dup.rotate_right!(num)
+  # end
 end

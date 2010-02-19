@@ -19,6 +19,21 @@ class TestZwoelftonspiel < Test::Unit::TestCase
     @spiel2.reihe = [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
   end
   
+  def test_tonumfang_analog_zu_dreitongruppen
+    assert_equal(0, @spiel1.umkehrung)
+    assert_equal(@spiel1.tonumfang.to_a, @spiel1.dreitongruppen.flatten)
+  end
+  
+  def test_umkehrung_aendert_dreitongruppen
+    spiel = Hauer::Zwoelftonspiel.new    
+    spiel.reihe = (0..11).to_a
+    assert_equal(spiel.dreitongruppen.flatten, spiel.reihe)
+    spiel.umkehrung = 1
+    assert_equal(1, spiel.umkehrung)
+    # umkehrung bedeutet rotation der inhalte der dreitongruppen nach rechts
+    assert_equal(spiel.dreitongruppen.flatten, [11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  end
+  
   # Melodie / Monophonie tests…
   
   def test_monophonie_erster_gattung_ist_gleich_reihe

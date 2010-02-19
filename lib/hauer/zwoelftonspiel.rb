@@ -4,6 +4,10 @@
 
 require File.dirname(__FILE__) + '/core_ext'
 
+# TODO Regressives Kontinuum / Akkordkrebs
+# TODO Mehrere Stimmen (?)
+# TODO Lambdoma, Stimmvertauschung (?)
+
 # Joseph Matthias Hauer ist der ursprüngliche Erfinder der Zwölftonmusik
 module Hauer
   module Lint
@@ -22,9 +26,16 @@ module Hauer
   class Zwoelftonspiel
     attr_accessor :reihe
     
+    # Bei der "Umkehrung" werden die Inhalte der Dreitongruppen / Quadranten verschoben.
+    # Umkehrung 0 bedeutet, die Dreitongruppen sind analog zum Tonumfang / zur sortieren Reihe
+    # Umkehrung 1..11 bedeutet, dass die Noten über die Quadranten um n nach rechts rotiert werden
+    # Umkehrung 12 ist logischer weise gleich mit Umkehrung 0. 13 mit 1 etc.
+    attr_accessor :umkehrung
+    
     def initialize
       # Das sind Midi-Töne. Es ginge auch 0..11, aber das wäre sehr tief.
-      @reihe = (50..61).to_a      
+      @reihe = (50..61).to_a  # FIXME use 0..11 ?
+      @umkehrung = 0
     end
     
     # Eine nach Dreitongruppen erstellte Klangreihe
@@ -34,7 +45,7 @@ module Hauer
       # Jedem Reihenton einer Schicht (= Position im Akkord) zuweisen
       @reihe.map { |note|
         # Schichten (Dreitongruppen) durchlaufen…
-        chromatische_dreitongruppen.each_with_index { |schicht, schicht_i|           
+        dreitongruppen.each_with_index { |schicht, schicht_i|           
           if schicht.include?(note)
             kamm[schicht_i] = note            
             break
@@ -57,7 +68,7 @@ module Hauer
         #  Wenn false "gattung 2. Gattung", 
         :zwischenschritte => true, 
         :flach => true,
-        :gattung => 5
+        :gattung => 5        
       }.merge!(opt)
       
       melo = []
@@ -107,8 +118,12 @@ module Hauer
       Hauer::Lint.reihe_ok?(self.reihe)
     end
     
-    def chromatische_dreitongruppen
-      (@reihe.min..(@reihe.min+11)).to_a.in_groups(4)
+    def tonumfang
+      (@reihe.min..(@reihe.min+11))
+    end
+    
+    def dreitongruppen
+      tonumfang.to_a.rotate_right!(self.umkehrung).in_groups(4)
     end
     
     def _finde_achsenton(achsentoene, zwoelfton, wendeton)
