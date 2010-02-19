@@ -31,19 +31,26 @@ module Hauer
     # Umkehrung 1..11 bedeutet, dass die Noten über die Quadranten um n nach rechts rotiert werden
     # Umkehrung 12 ist logischer weise gleich mit Umkehrung 0. 13 mit 1 etc.
     attr_accessor :umkehrung
+
+    # Akkordkrebs verwenden (true / false)
+    attr_accessor :verwende_akkordkrebs
+    def verwende_akkordkrebs?; verwende_akkordkrebs; end
+    
     
     def initialize
       # Das sind Midi-Töne. Es ginge auch 0..11, aber das wäre sehr tief.
       @reihe = (50..61).to_a  # FIXME use 0..11 ?
       @umkehrung = 0
+      @verwende_akkordkrebs = false
     end
     
     # Eine nach Dreitongruppen erstellte Klangreihe
+    # TODO refactor
     # TODO Klangreihe mit großem Dur-Septakkord am Anfang generieren?! (vgl. Götte)
-    def klangreihe      
+    def klangreihe(krebs=false)
       kamm = Array.new(4)
       # Jedem Reihenton einer Schicht (= Position im Akkord) zuweisen
-      @reihe.map { |note|
+      k = @reihe.map { |note|
         # Schichten (Dreitongruppen) durchlaufen…
         dreitongruppen.each_with_index { |schicht, schicht_i|           
           if schicht.include?(note)
@@ -58,17 +65,24 @@ module Hauer
         _array_spachteln!(akkord, kamm)
         akkord.sort!
       }
+      # TODO Bei Akkordkrebs mit dem 1. Akkord der ursprünglichen Klangreihe beginnen??
+      verwende_akkordkrebs? || krebs ? k.reverse.rotate_right! : k
     end
-    alias_method :kontinuum, :klangreihe      
+    alias_method :kontinuum, :klangreihe
+    
+    def akkordkrebs
+      klangreihe(true)
+    end
     
     # Die aus der klangreihe automatisch abgeleitete Melodie
     # Auch Monophonie genannt
+    # TODO refactor
     def melodie(opt = {})
       opt = {
         #  Wenn false "gattung 2. Gattung", 
         :zwischenschritte => true, 
         :flach => true,
-        :gattung => 5        
+        :gattung => 5    
       }.merge!(opt)
       
       melo = []
@@ -76,18 +90,27 @@ module Hauer
       reihe = @reihe
       # FIXME Wie wir hier vom zweiten einmal rum bis zum ersten Akkord laufen ist etwas komisch, aber ok.
       (1-akkorde.length..0).each_with_index { |akkord_i, i|
-        prekord = akkorde[akkord_i-1]
-        akkord = akkorde[akkord_i]
+        prekord = akkorde[akkord_i-1] # startet bei [0]
+        akkord = akkorde[akkord_i]    # startet bei [1]
         # Zwölf- und Wendeton bestimmen die "Flusslage" (V. Sokolowski)
-        zwoelfton_i = prekord.index(reihe[i])
-        wendeton_i = prekord.index((prekord - akkord).first)
-        zwoelfton = prekord[zwoelfton_i]
+        # Beim Akkordkrebs ist der (neue) Reihenton, der Wendeton vom Akkord zum Prekord
+        if verwende_akkordkrebs?
+          zwoelfton_i = akkord.index(_wendeton_von_nach(akkord, prekord).first)
+          zwoelfton = akkord[zwoelfton_i]
+        else
+          zwoelfton_i = prekord.index(reihe[i])
+          zwoelfton = prekord[zwoelfton_i]
+        end
+                        
+        wendeton_i = prekord.index(_wendeton_von_nach(prekord, akkord).first)
         wendeton = prekord[wendeton_i]
-        achsentoene = prekord - [prekord[zwoelfton_i], prekord[wendeton_i]]
+        achsentoene = prekord - [zwoelfton, wendeton]
         case opt[:gattung]
         when 1
           # 1. Gattung ist die Zwölftonreihe und eher theoretischer Natur
-          return opt[:flach] ? @reihe : @reihe.map{|n| [n]} 
+          # Falls der Akkordkrebs verwendet wird, können wir hier aber nicht direkt die @reihe zurückgeben,
+          # deshalb machen wir das der konsequenter weise per Hand…
+          melo << [zwoelfton]
         when 2
           # Ein Zwölfton + ein Achsenton + ein Wendeton
           # FIXME uniq macht es kurz, aber etwas kryptisch
@@ -103,9 +126,11 @@ module Hauer
           achsentoene = _naehe_sortiert(achsentoene, zwoelfton) if wendeton == zwoelfton
           melo << [zwoelfton, achsentoene[0], achsentoene[1], wendeton]
         when 5
-          # Bei der Methode mit den Zwischenschritten (bei Götte Gattung 5) vermag man "durchaus gleich mit dem 1. Sekundenschritt" beginnen (Sengstschmid)          
-          (melo << [prekord[wendeton_i]]) and next if i.zero? 
-          melo << prekord.values_at(*_von_bis(zwoelfton_i, wendeton_i).to_a)
+          # Bei der Methode mit den Zwischenschritten (zt + at dazwischen + wendeton) (bei Götte Gattung 5) vermag man "durchaus gleich mit dem 1. Sekundenschritt" beginnen (Sengstschmid)          
+          # (melo << [prekord[wendeton_i]]) and next if i.zero? 
+          dazwischen = achsentoene.select { |n| n.between?(*[zwoelfton, wendeton].sort) }
+          melo << [zwoelfton] and next if wendeton == zwoelfton
+          melo << [zwoelfton] + dazwischen + [wendeton]
         else 
          raise ArgumentError.new("Ich kenne keine Gattung #{opt[:gattung]}! Optionen: #{opt.inspect}")
         end
@@ -113,7 +138,7 @@ module Hauer
       return melo.flatten if opt[:flach]
       melo
     end
-    
+            
     def reihe_ok?
       Hauer::Lint.reihe_ok?(self.reihe)
     end
@@ -126,13 +151,18 @@ module Hauer
       tonumfang.to_a.rotate_right!(self.umkehrung).in_groups(4)
     end
     
+    def _wendeton_von_nach(von, nach)
+      # TODO
+      von - nach
+    end
+    
     def _finde_achsenton(achsentoene, zwoelfton, wendeton)
       # FIXME Bei der 3. und 4. Gattung gibt es zwei wege in welcher Reihenfolge die Achsentöne gespielt werden (siehe Tabelle von Sokolowski, Götte S.125)      
       # Hier wollen wir, wie bei der 2. Gattung) große Tonschritte möglichst 
       if zwoelfton == wendeton
         return _naehe_sortiert(achsentoene, zwoelfton).first
       end
-      zt_bis_wt = [zwoelfton, wendeton].sort          
+      zt_bis_wt = [zwoelfton, wendeton].sort
       achsentoene.each { |n| return n if n.between?(*zt_bis_wt) }
       # …und gehen wenn sonst von unten nach oben      
       achsentoene.first

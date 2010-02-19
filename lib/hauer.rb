@@ -1,3 +1,3 @@
 # encoding: UTF-8
-
-require File.dirname(__FILE__) + '/zwoelftonspiel.rb'
+$LOAD_PATH << File.dirname(__FILE__)
+require 'hauer/zwoelftonspiel'

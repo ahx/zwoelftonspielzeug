@@ -19,6 +19,30 @@ class TestZwoelftonspiel < Test::Unit::TestCase
     @spiel2.reihe = [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
   end
   
+  def test_akkordkrebs
+    krebs = @spiel1.klangreihe.reverse.rotate_right!
+    assert_equal(krebs, @spiel1.akkordkrebs)
+  end
+  
+  def test_verwende_akkordkrebs
+    @spiel1.verwende_akkordkrebs = true
+    assert @spiel1.verwende_akkordkrebs?
+  end
+  
+  def test_melodie_von_akkordkrebs
+    @spiel1.verwende_akkordkrebs = true
+    assert @spiel1.melodie
+  end
+  
+  # def test_melodie_von_akkordkrebs
+  #   # vgl. http://www.musiker.at/sengstschmidjohann/stichwort-akkordkrebs.php3
+  #   spiel = Hauer::Zwoelftonspiel.new
+  #   spiel.reihe = %w(e g cis d b c f a fis dis h gis).map{|n| note2midi(n)}
+  #   spiel.verwende_akkordkrebs = true
+  #   # Teste Gattung 1…
+  #   assert_equal(%w(e fis a c d f g e b h cis dis gis), spiel.melodie(:flach => true, :gattung => 1).map{|n| midi2note(n)})    
+  # end
+  
   def test_tonumfang_analog_zu_dreitongruppen
     assert_equal(0, @spiel1.umkehrung)
     assert_equal(@spiel1.tonumfang.to_a, @spiel1.dreitongruppen.flatten)
@@ -80,7 +104,25 @@ class TestZwoelftonspiel < Test::Unit::TestCase
       ], @spiel2.melodie(:gattung => 4, :flach => false))
   end
   
-  def test_kontinuum    
+  def test_monophonie_fuenfter_gattung   
+    # vgl. http://www.klangreihenmusik.at/skriptum-rekonstruktion-09.php3     
+    assert_equal([
+      [50], 
+      [51, 46], 
+      [48],
+      [47, 51, 53, 57],
+      [55],
+      [56, 53, 51],
+      [49, 53],
+      [52, 49, 47],
+      [46, 49, 52], 
+      [54],
+      [53, 49],
+      [50, 53, 56]
+      ], @spiel2.melodie(:gattung => 5, :flach => false))
+  end
+  
+  def test_kontinuum_alias_klangreihe    
     assert_equal([
       [60, 64, 67, 71], 
       [61, 64, 67, 71], 
@@ -95,6 +137,8 @@ class TestZwoelftonspiel < Test::Unit::TestCase
       [60, 64, 66, 69], 
       [60, 64, 67, 69]
       ], @spiel1.kontinuum)
+      
+    assert_equal(@spiel1.kontinuum, @spiel1.klangreihe)
       
     assert_equal([
       [46, 50, 53, 57], 
