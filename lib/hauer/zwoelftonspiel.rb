@@ -4,7 +4,7 @@
 
 require File.dirname(__FILE__) + '/core_ext'
 
-# TODO Regressives Kontinuum / Akkordkrebs
+# TODO Schlusston bei Akkordkrebs noch mal Nachschlagen
 # TODO Mehrere Stimmen (?)
 # TODO Lambdoma, Stimmvertauschung (?)
 
@@ -33,6 +33,7 @@ module Hauer
     attr_accessor :umkehrung
 
     # Akkordkrebs verwenden (true / false)
+    # TODO Name zu sperrig. Umbenennen!
     attr_accessor :verwende_akkordkrebs
     def verwende_akkordkrebs?; verwende_akkordkrebs; end
     
@@ -47,7 +48,7 @@ module Hauer
     # Eine nach Dreitongruppen erstellte Klangreihe
     # TODO refactor
     # TODO Klangreihe mit großem Dur-Septakkord am Anfang generieren?! (vgl. Götte)
-    def klangreihe(krebs=false)
+    def klangreihe
       kamm = Array.new(4)
       # Jedem Reihenton einer Schicht (= Position im Akkord) zuweisen
       k = @reihe.map { |note|
@@ -66,13 +67,9 @@ module Hauer
         akkord.sort!
       }
       # TODO Bei Akkordkrebs mit dem 1. Akkord der ursprünglichen Klangreihe beginnen??
-      verwende_akkordkrebs? || krebs ? k.reverse.rotate_right! : k
+      verwende_akkordkrebs? ? k.reverse.rotate_right! : k
     end
     alias_method :kontinuum, :klangreihe
-    
-    def akkordkrebs
-      klangreihe(true)
-    end
     
     # Die aus der klangreihe automatisch abgeleitete Melodie
     # Auch Monophonie genannt
@@ -83,27 +80,23 @@ module Hauer
         :zwischenschritte => true, 
         :flach => true,
         :gattung => 5    
-      }.merge!(opt)
-      
+      }.merge!(opt)      
       melo = []
       akkorde = self.klangreihe
       reihe = @reihe
-      # FIXME Wie wir hier vom zweiten einmal rum bis zum ersten Akkord laufen ist etwas komisch, aber ok.
+      # TODO Wie wir hier vom zweiten einmal rum bis zum ersten Akkord laufen ist komisch.
       (1-akkorde.length..0).each_with_index { |akkord_i, i|
         prekord = akkorde[akkord_i-1] # startet bei [0]
         akkord = akkorde[akkord_i]    # startet bei [1]
         # Zwölf- und Wendeton bestimmen die "Flusslage" (V. Sokolowski)
-        # Beim Akkordkrebs ist der (neue) Reihenton, der Wendeton vom Akkord zum Prekord
-        if verwende_akkordkrebs?
-          zwoelfton_i = akkord.index(_wendeton_von_nach(akkord, prekord).first)
-          zwoelfton = akkord[zwoelfton_i]
+        # Beim Akkordkrebs ist der (neue) Reihenton, der Wendeton vom Prekord nach davor
+        # Beim ersten Akkord wird der Normale Reihenton verwendet
+        if verwende_akkordkrebs? && !i.zero?
+          zwoelfton = _wendeton_von_nach(prekord, akkorde[i-1]).first
         else
-          zwoelfton_i = prekord.index(reihe[i])
-          zwoelfton = prekord[zwoelfton_i]
-        end
-                        
-        wendeton_i = prekord.index(_wendeton_von_nach(prekord, akkord).first)
-        wendeton = prekord[wendeton_i]
+          zwoelfton = reihe[i]
+        end                        
+        wendeton = _wendeton_von_nach(prekord, akkord).first
         achsentoene = prekord - [zwoelfton, wendeton]
         case opt[:gattung]
         when 1
@@ -127,9 +120,9 @@ module Hauer
           melo << [zwoelfton, achsentoene[0], achsentoene[1], wendeton]
         when 5
           # Bei der Methode mit den Zwischenschritten (zt + at dazwischen + wendeton) (bei Götte Gattung 5) vermag man "durchaus gleich mit dem 1. Sekundenschritt" beginnen (Sengstschmid)          
-          # (melo << [prekord[wendeton_i]]) and next if i.zero? 
-          dazwischen = achsentoene.select { |n| n.between?(*[zwoelfton, wendeton].sort) }
+          melo << [wendeton] and next if i.zero? 
           melo << [zwoelfton] and next if wendeton == zwoelfton
+          dazwischen = achsentoene.select { |n| n.between?(*[zwoelfton, wendeton].sort) }
           melo << [zwoelfton] + dazwischen + [wendeton]
         else 
          raise ArgumentError.new("Ich kenne keine Gattung #{opt[:gattung]}! Optionen: #{opt.inspect}")
