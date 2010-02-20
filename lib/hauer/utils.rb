@@ -1,19 +1,25 @@
 # encoding: UTF-8
 
 module Hauer
-  
+
 module Utils
   NOTEN = [%w(c), %w(cis des),  %w(d), %w(dis es), %w(e fes), %w(f eis), %w(fis ges), %w(g), %w(gis as), %w(a), %w(b ais), %w(h ces)]
   
   def midi2note(note)
-    # Wir schreiben hier "fes" statt "e", weil Sengstschmid das auch so gemacht hat
+    # Bei Midi ist 0 gleich C1
+    # Wir sind wehemente Verfechter der gleichschwebender Temperatur, deshalb 
+    # ist bei uns fis gleich ges etc.
     NOTEN[note % 12].first
   end
   module_function :midi2note
   
-  def note2midi(name)
+  def note2midi(name, grundton = nil)
+    grundton = grundton ? note2midi(grundton.to_s) : 0
     NOTEN.each_with_index { |namen, midi| 
-      return midi if namen.include?(name)
+      if namen.include?(name)
+        midi += 12 if midi < grundton
+        return midi
+      end
     }
     nil
   end

@@ -17,4 +17,9 @@ class TestUtils < Test::Unit::TestCase
     midis = %w(c fis ges a h).map{|n| Hauer::Utils.note2midi(n) }
     assert_equal([0, 6, 6, 9, 11], midis)
   end
+  
+  def test_note2midi_transponiert
+    midis = %w(fis ges a h c).map{|n| Hauer::Utils.note2midi(n, :fis) }
+    assert_equal([6, 6, 9, 11, 12], midis)
+  end
 end
