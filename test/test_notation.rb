@@ -28,4 +28,8 @@ class TestNotation < Test::Unit::TestCase
   def test_velocity
     assert_equal(90, Note(60, 1, :velocity => 90).velocity)
   end
+  
+  # TODO Klangreihe / Bassakkorde spielen
+  # def test_enumerable_note
+  # end
 end
