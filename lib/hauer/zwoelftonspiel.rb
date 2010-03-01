@@ -2,7 +2,9 @@
 # Ein Zwölftonspielgenerator (nach Joseph Matthias Hauer)
 # Language: German
 
-require File.dirname(__FILE__) + '/core_ext'
+$LOAD_PATH.unshift File.dirname(__FILE__) + '/..'
+require 'hauer/core_ext'
+require 'hauer/notation'
 
 # TODO Schlusston bei Akkordkrebs noch mal Nachschlagen
 # TODO Mehrere Stimmen (?)
@@ -23,7 +25,8 @@ module Hauer
   # Siehe Sengstschmid http://www.klangreihenmusik.at/skriptum-rekonstruktion-01kl.php3
   # Siehe auch Götte, S.111 ff
   # Ruby 1.8.(7) does not like ö, so we use oe :(
-  class Zwoelftonspiel
+  class Zwoelftonspiel    
+    include Hauer::Notation
     attr_accessor :reihe
     
     # Bei der "Umkehrung" werden die Inhalte der Dreitongruppen / Quadranten verschoben.
@@ -35,14 +38,35 @@ module Hauer
     # Akkordkrebs verwenden (true / false)
     # TODO Name zu sperrig. Umbenennen!
     attr_accessor :verwende_akkordkrebs
-    def verwende_akkordkrebs?; verwende_akkordkrebs; end
-    
+    def verwende_akkordkrebs?; verwende_akkordkrebs; end    
+        
+    class Takt < Struct.new(:zaehler, :nenner)
+      def laenge
+        zaehler / nenner
+      end
+    end
     
     def initialize
       # Das sind Midi-Töne. Es ginge auch 0..11, aber das wäre sehr tief.
       @reihe = (50..61).to_a  # FIXME use 0..11 ?
       @umkehrung = 0
       @verwende_akkordkrebs = false
+      # Wir benutzen einen Dreivierteltakt
+      @takt = Takt.new(3.0, 4.0)
+    end
+    
+    # Rhythmisiert die Töne der melodie und gibt Note-Instanzen zurück.
+    def melodie_notation(array)
+      noten = []
+      array.each {|k| 
+        klang = Array(k)
+        klang.each { |note|
+          # TODO Sonderfall: punktierte Note if klang.length == 1
+          wert =  @takt.laenge / klang.length
+          noten << Hauer::Notation.Note(note, wert) 
+        }        
+      }
+      noten
     end
     
     # Eine nach Dreitongruppen erstellte Klangreihe
@@ -55,7 +79,7 @@ module Hauer
         # Schichten (Dreitongruppen) durchlaufen…
         dreitongruppen.each_with_index { |schicht, schicht_i|           
           if schicht.include?(note)
-            kamm[schicht_i] = note            
+            kamm[schicht_i] = note
             break
           end
         }
@@ -67,7 +91,8 @@ module Hauer
         akkord.sort!
       }
       # TODO Bei Akkordkrebs mit dem 1. Akkord der ursprünglichen Klangreihe beginnen??
-      verwende_akkordkrebs? ? k.reverse.rotate_right! : k
+      k.reverse!.rotate_right! if verwende_akkordkrebs?
+      k
     end
     alias_method :kontinuum, :klangreihe
     
@@ -125,7 +150,7 @@ module Hauer
          raise ArgumentError.new("Ich kenne keine Gattung #{opt[:gattung]}! Optionen: #{opt.inspect}")
         end
       }
-      melo
+      melodie_notation melo
     end
     
     def reihe_ok?

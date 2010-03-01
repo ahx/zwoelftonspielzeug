@@ -4,6 +4,7 @@ require 'test/unit'
 
 $LOAD_PATH << File.dirname(__FILE__) + '/../lib'
 require 'hauer/zwoelftonspiel'
+require 'hauer/notation'
 require 'hauer/utils'
 include Hauer::Utils
 
@@ -37,7 +38,7 @@ class TestZwoelftonspiel < Test::Unit::TestCase
     spiel.reihe = %w(e g cis d b c f a fis dis h gis).map{|n| note2midi(n, :e)}
     spiel.verwende_akkordkrebs = true
     # Teste Gattung 1…
-    assert_equal(%w(e fis a c d f g e b h cis dis), spiel.melodie(:gattung => 1).flatten.map{|n| midi2note(n)})    
+    assert_equal(%w(e fis a c d f g e b h cis dis), spiel.melodie(:gattung => 1).flatten.map{|n| midi2note(n.pitch)})    
   end
   
   def test_tonumfang_analog_zu_dreitongruppen
@@ -55,20 +56,28 @@ class TestZwoelftonspiel < Test::Unit::TestCase
     assert_equal(spiel.dreitongruppen.flatten, [11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
   end
   
+  
+  def test_notation
+    assert_equal([
+      [57, 50], [51, 46], [48], [47, 57], [55], [56, 51], [49, 53], [52, 47], [46, 52], [54], [53, 49], [50, 56]
+      ].flatten!, @spiel2.melodie(:gattung => 2).map(&:pitch) )
+  end
+  
   # Melodie / Monophonie tests…
   
   def test_monophonie_erster_gattung_ist_gleich_reihe
-    assert_equal(@spiel1.reihe, @spiel1.melodie(:gattung => 1).flatten)
+    assert_equal(@spiel1.reihe, @spiel1.melodie(:gattung => 1).map(&:pitch) )
   end
   
   def test_monophonie_zweiter_gattung
     assert_equal([
       [57, 50], [51, 46], [48], [47, 57], [55], [56, 51], [49, 53], [52, 47], [46, 52], [54], [53, 49], [50, 56]
-      ], @spiel2.melodie(:gattung => 2))
+      ].flatten!, @spiel2.melodie(:gattung => 2).map(&:pitch) )
   end
   
   def test_monophonie_dritter_gattung
-    assert_equal([          
+    melodie = @spiel2.melodie(:gattung => 3)
+    [          
       [57, 53, 50], 
       [51, 53, 46], 
       [48, 51, 48],       
@@ -81,11 +90,15 @@ class TestZwoelftonspiel < Test::Unit::TestCase
       [54, 56, 54],       
       [53, 46, 49],      
       [50, 53, 56]
-      ], @spiel2.melodie(:gattung => 3))
+    ].flatten!.each_with_index { |n, i|
+      assert_equal(n, melodie[i].pitch)
+      assert_equal(0.25, melodie[i].value)
+    }
   end
   
   def test_monophonie_vierter_gattung    
-    assert_equal([          
+    melodie = @spiel2.melodie(:gattung => 4)
+    [     
       [57, 46, 53, 50], 
       [51, 53, 57, 46], 
       [48, 51, 53, 48],       
@@ -98,7 +111,10 @@ class TestZwoelftonspiel < Test::Unit::TestCase
       [54, 56, 49, 54],       
       [53, 46, 56, 49],      
       [50, 46, 53, 56]              
-      ], @spiel2.melodie(:gattung => 4))
+    ].flatten!.each_with_index { |n, i|
+      assert_equal(n, melodie[i].pitch)
+      assert_equal(0.1875, melodie[i].value)
+    }
   end
   
   def test_monophonie_fuenfter_gattung   
@@ -116,7 +132,7 @@ class TestZwoelftonspiel < Test::Unit::TestCase
       [54],
       [53, 49],
       [50, 53, 56]
-      ], @spiel2.melodie(:gattung => 5))
+      ].flatten!, @spiel2.melodie(:gattung => 5).map(&:pitch) )
   end
   
   def test_kontinuum_alias_klangreihe    
