@@ -76,9 +76,6 @@ module Hauer
     # TODO refactor
     def melodie(opt = {})
       opt = {
-        #  Wenn false "gattung 2. Gattung", 
-        :zwischenschritte => true, 
-        :flach => true,
         :gattung => 5    
       }.merge!(opt)      
       melo = []
@@ -128,10 +125,9 @@ module Hauer
          raise ArgumentError.new("Ich kenne keine Gattung #{opt[:gattung]}! Optionen: #{opt.inspect}")
         end
       }
-      return melo.flatten if opt[:flach]
       melo
     end
-            
+    
     def reihe_ok?
       Hauer::Lint.reihe_ok?(self.reihe)
     end

@@ -37,7 +37,7 @@ class TestZwoelftonspiel < Test::Unit::TestCase
     spiel.reihe = %w(e g cis d b c f a fis dis h gis).map{|n| note2midi(n, :e)}
     spiel.verwende_akkordkrebs = true
     # Teste Gattung 1…
-    assert_equal(%w(e fis a c d f g e b h cis dis), spiel.melodie(:flach => true, :gattung => 1).map{|n| midi2note(n)})    
+    assert_equal(%w(e fis a c d f g e b h cis dis), spiel.melodie(:gattung => 1).flatten.map{|n| midi2note(n)})    
   end
   
   def test_tonumfang_analog_zu_dreitongruppen
@@ -58,13 +58,13 @@ class TestZwoelftonspiel < Test::Unit::TestCase
   # Melodie / Monophonie tests…
   
   def test_monophonie_erster_gattung_ist_gleich_reihe
-    assert_equal(@spiel1.reihe, @spiel1.melodie(:gattung => 1))
+    assert_equal(@spiel1.reihe, @spiel1.melodie(:gattung => 1).flatten)
   end
   
   def test_monophonie_zweiter_gattung
     assert_equal([
       [57, 50], [51, 46], [48], [47, 57], [55], [56, 51], [49, 53], [52, 47], [46, 52], [54], [53, 49], [50, 56]
-      ], @spiel2.melodie(:gattung => 2, :flach => false))
+      ], @spiel2.melodie(:gattung => 2))
   end
   
   def test_monophonie_dritter_gattung
@@ -81,7 +81,7 @@ class TestZwoelftonspiel < Test::Unit::TestCase
       [54, 56, 54],       
       [53, 46, 49],      
       [50, 53, 56]
-      ], @spiel2.melodie(:gattung => 3, :flach => false))
+      ], @spiel2.melodie(:gattung => 3))
   end
   
   def test_monophonie_vierter_gattung    
@@ -98,7 +98,7 @@ class TestZwoelftonspiel < Test::Unit::TestCase
       [54, 56, 49, 54],       
       [53, 46, 56, 49],      
       [50, 46, 53, 56]              
-      ], @spiel2.melodie(:gattung => 4, :flach => false))
+      ], @spiel2.melodie(:gattung => 4))
   end
   
   def test_monophonie_fuenfter_gattung   
@@ -116,7 +116,7 @@ class TestZwoelftonspiel < Test::Unit::TestCase
       [54],
       [53, 49],
       [50, 53, 56]
-      ], @spiel2.melodie(:gattung => 5, :flach => false))
+      ], @spiel2.melodie(:gattung => 5))
   end
   
   def test_kontinuum_alias_klangreihe    
