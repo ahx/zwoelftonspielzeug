@@ -35,7 +35,7 @@ midi.use(:dls_synth) # OSX Synth
 
 # Spiel-Eigenschaften 
 # spiel.reihe.shuffle!
-# spiel.verwende_akkordkrebs = true
+spiel.verwende_akkordkrebs = true
 # spiel.umkehrung = 0
 # spiel.reihe.map!{|n| n + 2}
 
@@ -46,17 +46,17 @@ midi.use(:dls_synth) # OSX Synth
 
 require 'hauer/arpeggiator'
 
-# TODO Abspielen vom Arpeggio hackelt etwas.
-
 # Melodie über scheduler spielen!
 @stimmen = []
-@stimmen << spiel.klangreihe.map{|a| Hauer::Arpeggiator.arpeggio!(a, :reverse => true) }
-# @stimmen << spiel.melodie(:gattung => 2)
+arp = spiel.klangreihe.map{|a| a.map{|n| n - 12} }.map{|a| Hauer::Arpeggiator.arpeggio!(a, :reverse => spiel.verwende_akkordkrebs) }
+# @stimmen << arp
+@stimmen << spiel.klangreihe.map{|a| a.map{|n| n - 12} }
+# @stimmen << spiel.melodie(:gattung => 4)
 # @stimmen << spiel.klangreihe
 # @stimmen << spiel.melodie(:gattung => 5).each{|n| n.pitch += 12}
 @midi = midi
 require 'gamelan'
-@scheduler = Gamelan::Scheduler.new({:tempo => 80})
+@scheduler = Gamelan::Scheduler.new({:tempo => 100})
 
 def play_note(time_in_beats, note, channel=10)
     @scheduler.at(time_in_beats + note.offset) { @midi.note_on(note.pitch, channel, note.velocity) }
