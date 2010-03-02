@@ -44,6 +44,11 @@ module Hauer
       def laenge
         zaehler / nenner
       end
+      
+      # TODO betont? 
+      def betont?(schlagzeit)
+        schlagzeit.zero?
+      end
     end
     
     def initialize
@@ -60,10 +65,12 @@ module Hauer
       noten = []
       array.each {|k| 
         klang = Array(k)
-        klang.each { |note|
+        klang.each_with_index { |note, schlagzeit|
           # TODO Sonderfall: punktierte Note if klang.length == 1
           wert =  @takt.laenge / klang.length
-          noten << Hauer::Notation.Note(note, wert) 
+          note = Hauer::Notation.Note(note, wert) 
+          note.velocity = 92 if @takt.betont?(schlagzeit)
+          noten << note
         }        
       }
       noten
@@ -92,7 +99,7 @@ module Hauer
         # Note(akkord, @takt.laenge)
       }
       k.map! {|akkord|
-        Note(akkord, @takt.laenge)
+        akkord.map{|note| Note(note, @takt.laenge)}
       }
       # TODO Bei Akkordkrebs mit dem 1. Akkord der ursprünglichen Klangreihe beginnen??
       k.reverse!.rotate_right! if verwende_akkordkrebs?
@@ -108,7 +115,7 @@ module Hauer
         :gattung => 5    
       }.merge!(opt)      
       melo = []
-      akkorde = self.klangreihe.map(&:pitch)
+      akkorde = self.klangreihe.map {|a| a.map(&:pitch)}
       reihe = @reihe
       # TODO Wie wir hier vom zweiten einmal rum bis zum ersten Akkord laufen ist komisch.
       (1-akkorde.length..0).each_with_index { |akkord_i, i|

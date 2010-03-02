@@ -136,7 +136,7 @@ class TestZwoelftonspiel < Test::Unit::TestCase
   end
   
   def test_kontinuum_alias_klangreihe    
-    assert_equal([
+    assert_equal [
       [60, 64, 67, 71], 
       [61, 64, 67, 71], 
       [62, 64, 67, 71], 
@@ -149,11 +149,11 @@ class TestZwoelftonspiel < Test::Unit::TestCase
       [62, 64, 66, 69], 
       [60, 64, 66, 69], 
       [60, 64, 67, 69]
-      ], @spiel1.kontinuum.map(&:pitch))
+      ], @spiel1.kontinuum.map {|a| a.map(&:pitch)}
       
     assert_equal(@spiel1.kontinuum, @spiel1.klangreihe)
       
-    assert_equal([
+    assert_equal [
       [46, 50, 53, 57], 
       [46, 51, 53, 57], 
       [48, 51, 53, 57], 
@@ -166,7 +166,7 @@ class TestZwoelftonspiel < Test::Unit::TestCase
       [46, 49, 54, 56],             
       [46, 49, 53, 56],       
       [46, 50, 53, 56]
-      ], @spiel2.kontinuum.map(&:pitch))
+      ], @spiel2.kontinuum.map {|a| a.map(&:pitch)}
   end
   
   def test_neu
