@@ -85,10 +85,14 @@ module Hauer
         }
         kamm.dup        
       # Akkord-leerstellen auffüllen und sortieren
-      }.each { |akkord|
-        next(akkord) unless akkord.include?(nil)
+      }
+      k.each { |akkord|
+        next(akkord) unless akkord.include?(nil)        
         _array_spachteln!(akkord, kamm)
-        akkord.sort!
+        # Note(akkord, @takt.laenge)
+      }
+      k.map! {|akkord|
+        Note(akkord, @takt.laenge)
       }
       # TODO Bei Akkordkrebs mit dem 1. Akkord der ursprünglichen Klangreihe beginnen??
       k.reverse!.rotate_right! if verwende_akkordkrebs?
@@ -104,7 +108,7 @@ module Hauer
         :gattung => 5    
       }.merge!(opt)      
       melo = []
-      akkorde = self.klangreihe
+      akkorde = self.klangreihe.map(&:pitch)
       reihe = @reihe
       # TODO Wie wir hier vom zweiten einmal rum bis zum ersten Akkord laufen ist komisch.
       (1-akkorde.length..0).each_with_index { |akkord_i, i|
@@ -117,7 +121,7 @@ module Hauer
           zwoelfton = _wendeton_von_nach(prekord, akkorde[i-1]).first
         else
           zwoelfton = reihe[i]
-        end                        
+        end
         wendeton = _wendeton_von_nach(prekord, akkord).first
         achsentoene = prekord - [zwoelfton, wendeton]
         case opt[:gattung]
@@ -196,6 +200,7 @@ module Hauer
       array.each_with_index { |value, index|
         array[index] = spachtel[index] if value.nil?
       }
+      array
     end
   end
 end

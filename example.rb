@@ -50,18 +50,21 @@ midi.use(:dls_synth) # OSX Synth
 
 # Melodie über scheduler spielen!
 @stimmen = []
-@stimmen << spiel.melodie(:gattung => 1).each{|n| n.pitch -= 12}
-@stimmen << spiel.melodie(:gattung => 3)
-# @stimmen << spiel.melodie(:gattung => 3)
+
+# TODO nicht mehrere pitches pro Note! Das ist Käse! Einfach Arrays von Noten!!
+@stimmen << spiel.klangreihe.each{|a| a.pitch.map!{|n| n - 12}}
+# @stimmen << spiel.melodie(:gattung => 2)
+@stimmen << spiel.melodie(:gattung => 4).each{|n| n.pitch += 12}
 @midi = midi
 require 'gamelan'
 @scheduler = Gamelan::Scheduler.new({:tempo => 90})
 
 def play_note(time_in_beats, note, channel=10)
-  pitch = note.pitch
   duration, velocity = note.value, note.velocity
-  @scheduler.at(time_in_beats) { @midi.note_on(pitch, channel, velocity) }
-  @scheduler.at(time_in_beats + duration) { @midi.note_off(pitch, channel, velocity) }
+  Array(note.pitch).each {|pitch|    
+    @scheduler.at(time_in_beats) { @midi.note_on(pitch, channel, velocity) }
+    @scheduler.at(time_in_beats + duration) { @midi.note_off(pitch, channel, velocity) }
+  }  
 end
 
 def schedule_events  

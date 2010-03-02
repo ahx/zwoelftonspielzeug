@@ -149,7 +149,7 @@ class TestZwoelftonspiel < Test::Unit::TestCase
       [62, 64, 66, 69], 
       [60, 64, 66, 69], 
       [60, 64, 67, 69]
-      ], @spiel1.kontinuum)
+      ], @spiel1.kontinuum.map(&:pitch))
       
     assert_equal(@spiel1.kontinuum, @spiel1.klangreihe)
       
@@ -166,7 +166,7 @@ class TestZwoelftonspiel < Test::Unit::TestCase
       [46, 49, 54, 56],             
       [46, 49, 53, 56],       
       [46, 50, 53, 56]
-      ], @spiel2.kontinuum)
+      ], @spiel2.kontinuum.map(&:pitch))
   end
   
   def test_neu
