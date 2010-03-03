@@ -84,12 +84,13 @@ module Zwoelftonspielzeug
 end
 
 
-automat = Zwoelftonspielzeug::Automat.new
+# automat = Zwoelftonspielzeug::Automat.new
 # automat.spiel.verwende_akkordkrebs = true
 # automat.spiel.umkehrung = 0
 # Reihe aus J.M. Hauers Zwölftonspiel für Cembalo oder Klavier 11. Juni 1955
-automat.spiel.reihe =  [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
-automat.start
-automat.scheduler.join
-# spiel…
-# automat.stop
+# automat.spiel.reihe =  [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
+# automat.start
+# Live coding!
+# loop do
+#   eval gets
+# end
