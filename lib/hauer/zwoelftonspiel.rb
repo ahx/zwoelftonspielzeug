@@ -38,11 +38,17 @@ module Hauer
     # Akkordkrebs verwenden (true / false)
     # TODO Name zu sperrig. Umbenennen!
     attr_accessor :verwende_akkordkrebs
+    attr :takt
     def verwende_akkordkrebs?; verwende_akkordkrebs; end    
         
     class Takt < Struct.new(:zaehler, :nenner)
       def laenge
         zaehler / nenner
+      end
+      
+      # Länge eines Schlages
+      def schlag
+        1.0 / nenner
       end
       
       # TODO betont? 
