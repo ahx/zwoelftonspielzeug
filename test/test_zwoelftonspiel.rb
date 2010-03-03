@@ -173,5 +173,10 @@ class TestZwoelftonspiel < Test::Unit::TestCase
     z = Hauer::Zwoelftonspiel.new
     assert_equal(12, z.reihe.length)
     assert_equal(12, z.klangreihe.length)
+  end
+  
+  def test_transponiert
+    @spiel1.transposition = 2
+    assert_equal([71, 61, 62, 70, 68, 65, 63, 66, 69, 64, 60, 67].map{|n| n+2},  @spiel1.reihe)
   end    
 end

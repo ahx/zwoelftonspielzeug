@@ -34,6 +34,8 @@ module Hauer
     # Umkehrung 1..11 bedeutet, dass die Noten über die Quadranten um n nach rechts rotiert werden
     # Umkehrung 12 ist logischer weise gleich mit Umkehrung 0. 13 mit 1 etc.
     attr_accessor :umkehrung
+        # Durch die (virtuelle) Transposition der Reihe wird die Klangreihe/Melodie transponiert. Siehe reihe
+    attr_accessor :transposition
 
     # Akkordkrebs verwenden (true / false)
     # TODO Name zu sperrig. Umbenennen!
@@ -62,10 +64,15 @@ module Hauer
       @reihe = (50..61).to_a  # FIXME use 0..11 ?
       @umkehrung = 0
       @verwende_akkordkrebs = false
+      @transposition = 0
       # Wir benutzen einen Dreivierteltakt
       @takt = Takt.new(3.0, 4.0)
     end
     
+    def reihe
+      @reihe.map{|n| n + @transposition}
+    end
+
     # Rhythmisiert die Töne der melodie und gibt Note-Instanzen zurück.
     def melodie_notation(array)
       noten = []
@@ -88,7 +95,7 @@ module Hauer
     def klangreihe
       kamm = Array.new(4)
       # Jedem Reihenton einer Schicht (= Position im Akkord) zuweisen
-      k = @reihe.map { |note|
+      k = reihe.map { |note|
         # Schichten (Dreitongruppen) durchlaufen…
         dreitongruppen.each_with_index { |schicht, schicht_i|           
           if schicht.include?(note)
@@ -122,7 +129,6 @@ module Hauer
       }.merge!(opt)      
       melo = []
       akkorde = self.klangreihe.map {|a| a.map(&:pitch)}
-      reihe = @reihe
       # TODO Wie wir hier vom zweiten einmal rum bis zum ersten Akkord laufen ist komisch.
       (1-akkorde.length..0).each_with_index { |akkord_i, i|
         prekord = akkorde[akkord_i-1] # startet bei [0]
