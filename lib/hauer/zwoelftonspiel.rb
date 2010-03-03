@@ -68,6 +68,7 @@ module Hauer
       @takt = Takt.new(3.0, 4.0)
     end
     
+    # Keiner liest @reihe alle lesen reihe !
     def reihe
       @reihe.map{|n| n + @transposition}
     end
@@ -145,7 +146,7 @@ module Hauer
         case opt[:gattung]
         when 1
           # 1. Gattung ist die Zwölftonreihe und eher theoretischer Natur
-          # Falls der Akkordkrebs verwendet wird, können wir hier aber nicht direkt die @reihe zurückgeben,
+          # Falls der Akkordkrebs verwendet wird, können wir hier aber nicht direkt die reihe zurückgeben,
           # deshalb machen wir das der konsequenter weise per Hand…
           melo << [zwoelfton]
         when 2
@@ -180,7 +181,7 @@ module Hauer
     end
     
     def tonumfang
-      (@reihe.min..(@reihe.min+11))
+      (reihe.min..(reihe.min+11))
     end
     
     def dreitongruppen

@@ -176,7 +176,9 @@ class TestZwoelftonspiel < Test::Unit::TestCase
   end
   
   def test_transponiert
-    @spiel1.transposition = 2
+    assert_equal (60..71), @spiel1.tonumfang
+    @spiel1.transposition = +2
+    assert_equal (62..73), @spiel1.tonumfang
     assert_equal([71, 61, 62, 70, 68, 65, 63, 66, 69, 64, 60, 67].map{|n| n+2},  @spiel1.reihe)
   end    
 end
