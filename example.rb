@@ -35,7 +35,7 @@ midi.use(:dls_synth) # OSX Synth
 
 # Spiel-Eigenschaften 
 # spiel.reihe.shuffle!
-spiel.verwende_akkordkrebs = true
+spiel.akkordkrebs = true
 # spiel.umkehrung = 0
 # spiel.reihe.map!{|n| n + 2}
 
@@ -48,7 +48,7 @@ require 'hauer/arpeggiator'
 
 # Melodie über scheduler spielen!
 @stimmen = []
-arp = spiel.klangreihe.map{|a| a.map{|n| n - 12} }.map{|a| Hauer::Arpeggiator.arpeggio!(a, :reverse => spiel.verwende_akkordkrebs) }
+arp = spiel.klangreihe.map{|a| a.map{|n| n - 12} }.map{|a| Hauer::Arpeggiator.arpeggio!(a, :reverse => spiel.akkordkrebs) }
 # @stimmen << arp
 @stimmen << spiel.klangreihe.map{|a| a.map{|n| n - 12} }
 # @stimmen << spiel.melodie(:gattung => 4)

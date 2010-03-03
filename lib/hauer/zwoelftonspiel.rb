@@ -38,10 +38,9 @@ module Hauer
     attr_accessor :transposition
 
     # Akkordkrebs verwenden (true / false)
-    # TODO Name zu sperrig. Umbenennen!
-    attr_accessor :verwende_akkordkrebs
+    attr_accessor :akkordkrebs
     attr :takt
-    def verwende_akkordkrebs?; verwende_akkordkrebs; end    
+    def akkordkrebs?; akkordkrebs; end    
         
     class Takt < Struct.new(:zaehler, :nenner)
       def laenge
@@ -63,7 +62,7 @@ module Hauer
       # Das sind Midi-Töne. Es ginge auch 0..11, aber das wäre sehr tief.
       @reihe = (50..61).to_a  # FIXME use 0..11 ?
       @umkehrung = 0
-      @verwende_akkordkrebs = false
+      @akkordkrebs = false
       @transposition = 0
       # Wir benutzen einen Dreivierteltakt
       @takt = Takt.new(3.0, 4.0)
@@ -115,7 +114,7 @@ module Hauer
         akkord.map{|note| Note(note, @takt.laenge)}
       }
       # TODO Bei Akkordkrebs mit dem 1. Akkord der ursprünglichen Klangreihe beginnen??
-      k.reverse!.rotate_right! if verwende_akkordkrebs?
+      k.reverse!.rotate_right! if akkordkrebs?
       k
     end
     alias_method :kontinuum, :klangreihe
@@ -136,7 +135,7 @@ module Hauer
         # Zwölf- und Wendeton bestimmen die "Flusslage" (V. Sokolowski)
         # Beim Akkordkrebs ist der (neue) Reihenton, der Wendeton vom Prekord nach davor
         # Beim ersten Akkord wird der Normale Reihenton verwendet
-        if verwende_akkordkrebs? && !i.zero?
+        if akkordkrebs? && !i.zero?
           zwoelfton = _wendeton_von_nach(prekord, akkorde[i-1]).first
         else
           zwoelfton = reihe[i]

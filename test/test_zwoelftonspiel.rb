@@ -20,15 +20,15 @@ class TestZwoelftonspiel < Test::Unit::TestCase
     @spiel2.reihe = [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
   end
   
-  def test_verwende_akkordkrebs
+  def test_akkordkrebs
     krebs = @spiel1.klangreihe.reverse.rotate_right!
-    assert @spiel1.verwende_akkordkrebs = true
-    assert @spiel1.verwende_akkordkrebs?
+    assert @spiel1.akkordkrebs = true
+    assert @spiel1.akkordkrebs?
     assert_equal(krebs, @spiel1.klangreihe)
   end
   
   def test_melodie_von_akkordkrebs
-    @spiel1.verwende_akkordkrebs = true
+    @spiel1.akkordkrebs = true
     assert @spiel1.melodie
   end
   
@@ -36,7 +36,7 @@ class TestZwoelftonspiel < Test::Unit::TestCase
     # vgl. http://www.musiker.at/sengstschmidjohann/stichwort-akkordkrebs.php3
     spiel = Hauer::Zwoelftonspiel.new
     spiel.reihe = %w(e g cis d b c f a fis dis h gis).map{|n| note2midi(n, :e)}
-    spiel.verwende_akkordkrebs = true
+    spiel.akkordkrebs = true
     # Teste Gattung 1…
     assert_equal(%w(e fis a c d f g e b h cis dis), spiel.melodie(:gattung => 1).flatten.map{|n| midi2note(n.pitch)})    
   end
