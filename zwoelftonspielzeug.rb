@@ -13,6 +13,7 @@ module Zwoelftonspielzeug
     include Hauer::Notation
     attr :spiel
     attr :scheduler
+    attr :stimmen
  
     def initialize
       @spiel = Hauer::Zwoelftonspiel.new
@@ -20,6 +21,7 @@ module Zwoelftonspielzeug
       @midi = MIDIator::Interface.new
       # @midi.autodetect_driver
       @midi.use(:dls_synth)
+      init_stimmen
     end
  
     def start
@@ -29,21 +31,22 @@ module Zwoelftonspielzeug
     
     def stop
       @scheduler.stop
-      @midi.close
+      # @midi.close
     end
     
     # Alle zwölf Takte soll etwas passieren
     def zwoelfschlag(zeit)
-      stimmen_komponieren!
       stimmen_schedulen!(zeit)
       neustart_zwoelfschlag(zeit)
     end
         
-    # Das ganze komponieren!
-    def stimmen_komponieren!
+    # Stimmen default initialisieren
+    def _init_stimmen
       @stimmen = []
-      @stimmen << @spiel.klangreihe
-      @stimmen << @spiel.melodie
+      @stimmen << @spiel.melodie(:gattung => 1)
+      # @stimmen << @spiel.klangreihe.map{|a| a.map{|n| n - 12} }
+      # @stimmen << @spiel.melodie # 5. Gattung
+      # @stimmen << @spiel.melodie(:gattung => 2).map{|n| n + 24}
     end
     
     def stimmen_schedulen!(start)      
@@ -84,15 +87,15 @@ module Zwoelftonspielzeug
 end
 
 
-automat = Zwoelftonspielzeug::Automat.new
-# automat.spiel.akkordkrebs = true
-# automat.spiel.umkehrung = 0
+a = Zwoelftonspielzeug::Automat.new
+# a.spiel.akkordkrebs = true
+# a.spiel.umkehrung = 0
 # Reihe aus J.M. Hauers Zwölftonspiel für Cembalo oder Klavier 11. Juni 1955
-# automat.spiel.reihe =  [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
-automat.start
-# automat.scheduler.join
+# a.spiel.reihe =  [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
+a.start
+# a.scheduler.join
 # Live coding!
-s = automat.spiel
+s = a.spiel
 loop do
   eval gets
 end
