@@ -1,5 +1,6 @@
 # encoding: UTF-8
 # Language: Denglisch
+require 'rubygems' if RUBY_VERSION < '1.9'
 require 'midiator'
 require 'gamelan'
 $LOAD_PATH << File.dirname(__FILE__) + '/lib'
@@ -19,34 +20,43 @@ module Zwoelftonspielzeug
       @spiel = Hauer::Zwoelftonspiel.new
       @scheduler = Gamelan::Scheduler.new :tempo => 90
       @midi = MIDIator::Interface.new
+      @midi.use(:core_midi)   
+      # TODO Fix midiator tco list midi devices!   
+      puts "There are #{MIDIator::Driver::CoreMIDI::C.MIDIGetNumberOfDestinations} midi destinations"
+      # @midi.driver.destination = MIDIator::Driver::CoreMIDI::C.MIDIGetDestination(1)
       # @midi.autodetect_driver
-      @midi.use(:dls_synth)
-      init_stimmen
+      @midi.use(:mmj)      
+      # @midi.use(:core_midi)
+      # @midi.use(:dls_synth)
+      @stimmen = []
     end
+
  
     def start
-      neustart_zwoelfschlag
+      zwoelfschlag(0)
       @scheduler.run
     end
     
     def stop
       @scheduler.stop
-      # @midi.close
+      @midi.close
     end
     
     # Alle zwölf Takte soll etwas passieren
     def zwoelfschlag(zeit)
+      stimmen! # TODO remove
       stimmen_schedulen!(zeit)
       neustart_zwoelfschlag(zeit)
     end
-        
+            
     # Stimmen default initialisieren
-    def _init_stimmen
+    def stimmen!            
       @stimmen = []
-      @stimmen << @spiel.melodie(:gattung => 1)
+      # @stimmen << @spiel.melodie(:gattung => 1)
       # @stimmen << @spiel.klangreihe.map{|a| a.map{|n| n - 12} }
-      # @stimmen << @spiel.melodie # 5. Gattung
+      @stimmen << @spiel.melodie # 5. Gattung
       # @stimmen << @spiel.melodie(:gattung => 2).map{|n| n + 24}
+      p spiel.reihe
     end
     
     def stimmen_schedulen!(start)      
@@ -91,11 +101,11 @@ a = Zwoelftonspielzeug::Automat.new
 # a.spiel.akkordkrebs = true
 # a.spiel.umkehrung = 0
 # Reihe aus J.M. Hauers Zwölftonspiel für Cembalo oder Klavier 11. Juni 1955
-# a.spiel.reihe =  [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
+a.spiel.reihe =  [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
 a.start
-# a.scheduler.join
+a.scheduler.join
 # Live coding!
-s = a.spiel
-loop do
-  eval gets
-end
+# s = a.spiel
+# loop do
+#   eval gets
+# end
