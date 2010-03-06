@@ -19,15 +19,13 @@ module Zwoelftonspielzeug
     def initialize
       @spiel = Hauer::Zwoelftonspiel.new
       @scheduler = Gamelan::Scheduler.new :tempo => 90
-      @midi = MIDIator::Interface.new
-      @midi.use(:core_midi)   
+      @interface = MIDIator::Interface.new
       # TODO Fix midiator tco list midi devices!   
-      puts "There are #{MIDIator::Driver::CoreMIDI::C.MIDIGetNumberOfDestinations} midi destinations"
-      # @midi.driver.destination = MIDIator::Driver::CoreMIDI::C.MIDIGetDestination(1)
-      # @midi.autodetect_driver
-      @midi.use(:mmj)      
-      # @midi.use(:core_midi)
-      # @midi.use(:dls_synth)
+      # puts "There are #{MIDIator::Driver::CoreMIDI::C.MIDIGetNumberOfDestinations} midi destinations"
+      # @interface.driver.destination = MIDIator::Driver::CoreMIDI::C.MIDIGetDestination(1)
+      # @interface.autodetect_driver
+      # @interface.use(:core_midi)
+      @interface.use(:dls_synth)
       @stimmen = []
     end
 
@@ -39,7 +37,7 @@ module Zwoelftonspielzeug
     
     def stop
       @scheduler.stop
-      @midi.close
+      @interface.close
     end
     
     # Alle zwölf Takte soll etwas passieren
@@ -77,8 +75,8 @@ module Zwoelftonspielzeug
     end        
     
     def play_note(time_in_beats, note, channel=10)
-      @scheduler.at(time_in_beats + note.offset) { @midi.note_on(note.pitch, channel, note.velocity) }
-      @scheduler.at(time_in_beats + note.offset + note.value) { @midi.note_off(note.pitch, channel, note.velocity) }    
+      @scheduler.at(time_in_beats + note.offset) { @interface.note_on(note.pitch, channel, note.velocity) }
+      @scheduler.at(time_in_beats + note.offset + note.value) { @interface.note_off(note.pitch, channel, note.velocity) }    
     end
     
     
