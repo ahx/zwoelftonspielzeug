@@ -1,0 +1,58 @@
+#N canvas 635 98 809 664 10;
+#X obj 201 83 notein;
+#X obj 202 372 dac~;
+#X obj 199 333 *~;
+#X obj 325 63 vsl 15 128 0 127 0 0 empty empty empty 0 -8 0 10 -262144
+-1 -1 0 1;
+#X floatatom 317 206 5 0 0 0 - - -;
+#X text 314 38 Attack;
+#X obj 370 63 vsl 15 128 0 127 0 0 empty empty empty 0 -8 0 10 -262144
+-1 -1 0 1;
+#X floatatom 362 207 5 0 0 0 - - -;
+#X obj 417 64 vsl 15 128 0 127 0 0 empty empty empty 0 -8 0 10 -262144
+-1 -1 0 1;
+#X floatatom 409 207 5 0 0 0 - - -;
+#X obj 464 62 vsl 15 128 0 2000 0 0 empty empty empty 0 -8 0 10 -262144
+-1 -1 0 1;
+#X floatatom 456 205 5 0 0 0 - - -;
+#X text 358 39 Decay;
+#X text 405 36 Sustain;
+#X text 454 37 Release;
+#X obj 97 272 osc~;
+#X obj 94 241 +~ 0.5;
+#X obj 43 236 osc~ 1;
+#X floatatom 41 202 5 0 0 0 - - -;
+#X floatatom 173 165 5 0 0 0 - - -;
+#X floatatom 168 214 5 0 0 0 - - -;
+#X obj 41 149 mtof;
+#X obj 85 305 *~;
+#X text 50 54 Amplitudenmodulation;
+#X obj 92 352 vcf~ 10;
+#X obj 88 182 osc~ 440;
+#X obj 90 211 *~ 300;
+#X obj 261 243 adsr 1 0.25 0.05 70 220;
+#X floatatom 183 136 5 0 0 0 - - -;
+#X connect 0 0 21 0;
+#X connect 0 0 28 0;
+#X connect 0 1 27 0;
+#X connect 2 0 1 0;
+#X connect 2 0 1 1;
+#X connect 3 0 4 0;
+#X connect 4 0 27 2;
+#X connect 6 0 7 0;
+#X connect 7 0 27 3;
+#X connect 8 0 9 0;
+#X connect 9 0 27 4;
+#X connect 10 0 11 0;
+#X connect 11 0 27 5;
+#X connect 15 0 22 1;
+#X connect 16 0 15 0;
+#X connect 17 0 22 0;
+#X connect 18 0 17 0;
+#X connect 19 0 25 0;
+#X connect 20 0 26 1;
+#X connect 21 0 18 0;
+#X connect 22 0 2 0;
+#X connect 25 0 26 0;
+#X connect 26 0 16 0;
+#X connect 27 0 2 1;

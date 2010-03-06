@@ -1,0 +1,12 @@
+#N canvas 237 186 454 304 10;
+#X obj 32 36 notein;
+#X obj 74 92 pack 0 0 0;
+#X obj 96 133 route 0 1 2 3;
+#X obj 90 192 bass;
+#X obj 128 193 tenor;
+#X obj 173 191 alt;
+#X obj 208 193 sopran;
+#X connect 0 0 1 1;
+#X connect 0 1 1 2;
+#X connect 0 2 1 0;
+#X connect 1 0 2 0;
