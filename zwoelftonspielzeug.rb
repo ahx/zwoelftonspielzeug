@@ -20,12 +20,12 @@ module Zwoelftonspielzeug
       @spiel = Hauer::Zwoelftonspiel.new
       @scheduler = Gamelan::Scheduler.new :tempo => 90
       @interface = MIDIator::Interface.new
-      # TODO Fix midiator tco list midi devices!   
-      # puts "There are #{MIDIator::Driver::CoreMIDI::C.MIDIGetNumberOfDestinations} midi destinations"
-      # @interface.driver.destination = MIDIator::Driver::CoreMIDI::C.MIDIGetDestination(1)
-      # @interface.autodetect_driver
+      @interface.autodetect_driver
       # @interface.use(:core_midi)
-      @interface.use(:dls_synth)
+      # @interface.use(:dls_synth)
+      # TODO Fix midiator tco list midi devices!   
+      # puts "There are#{MIDIator::Driver::CoreMIDI::C.mIDIGetNumberOfDestinations} midi destinations"
+      # @interface.driver.destination = MIDIator::Driver::CoreMIDI::C.MIDIGetDestination(1)
       @stimmen = []
     end
 
@@ -54,7 +54,7 @@ module Zwoelftonspielzeug
       # @stimmen << @spiel.klangreihe.map{|a| a.map{|n| n - 12} }
       @stimmen << @spiel.melodie # 5. Gattung
       # @stimmen << @spiel.melodie(:gattung => 2).map{|n| n + 24}
-      p spiel.reihe
+      spiel.reihe
     end
     
     def stimmen_schedulen!(start)      
