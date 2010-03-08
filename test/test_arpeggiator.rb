@@ -24,6 +24,8 @@ class TestArpeggiator < Test::Unit::TestCase
     assert_equal(@arp, @noten)
     # TODO test arp
     assert Hauer::Arpeggiator.arpeggio!(@noten, :arp => 0.1)
+    # TODO test reverse
+    assert Hauer::Arpeggiator.arpeggio!(@noten, :reverse => true)
   end
   
   def test_nested

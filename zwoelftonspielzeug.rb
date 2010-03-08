@@ -1,6 +1,6 @@
 # encoding: UTF-8
 # Language: Denglisch
-require 'rubygems' if RUBY_VERSION < '1.9'
+require 'rubygems' # TODO Remove. Use Bundler
 require 'midiator'
 require 'gamelan'
 $LOAD_PATH << File.dirname(__FILE__) + '/lib'
@@ -8,6 +8,12 @@ require 'hauer'
 
 module Zwoelftonspielzeug
   include Hauer::Notation
+
+  unless defined? BasicObject
+    warn "Defining BasicObject!"
+    # This is all we really need…
+    class BasicObject; end
+  end
   
   # Empfängt parameter für das Zwölftonspiel und Sendet MIDI Signale 
   class Automat
@@ -50,7 +56,8 @@ module Zwoelftonspielzeug
       beat_offset = start
       @stimmen.each { |stimme|
         beat_offset = start
-        stimme.each {|note|
+        noten = stimme.is_a?(Proc) ? stimme.call : stimme        
+        noten.each {|note|
           beat_offset += _schedule_note(beat_offset, note)
         }
       }
@@ -81,23 +88,46 @@ module Zwoelftonspielzeug
       end
     end
   end
+  
+  class Proxy < BasicObject
+    def initialize(receiver)
+      @receiver = receiver
+    end
+    def method_missing(name, *args)
+      ::Kernel.raise ::NoMethodError.new(name) unless @receiver.respond_to? name
+      @name = name
+      @args = args
+      ::Proc.new {        
+        @receiver.send @name, *@args
+      }
+    end
+  end
 end
+
 
 
 a = Zwoelftonspielzeug::Automat.new
 s = a.spiel
+p = Zwoelftonspielzeug::Proxy.new s
 # a.spiel.akkordkrebs = true
-# a.spiel.umkehrung = 0
+# a.spiel.umkehrung = 2
 # Reihe aus J.M. Hauers Zwölftonspiel für Cembalo oder Klavier 11. Juni 1955
 a.spiel.reihe =  [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
-a.start
-# a.scheduler.join
-#a.stimmen << s.melodie(:gattung => 1)
+# a.stimmen << s.melodie(:gattung => 1)
 #a.stimmen << s.klangreihe.map{|a| a.map{|n| n - 12} }
-a.stimmen << s.melodie # 5. Gattung
-#a.stimmen << s.melodie(:gattung => 2).map{|n| n + 24}
+a.stimmen << p.melodie # 5. Gattung
+a.stimmen << proc { Hauer::Arpeggiator.arpeggio!(s.klangreihe, :reverse => s.akkordkrebs?) }
 
+#a.stimmen << s.melodie(:gattung => 2).map{|n| n + 24}
+a.start
+# a.stimmen << arp(p.klangreihe)
+
+# a.scheduler.join
 # Live coding!
-loop do
-  eval gets
+loop do  
+  begin
+    eval gets
+  rescue    
+    puts "???"
+  end
 end

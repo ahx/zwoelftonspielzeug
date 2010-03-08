@@ -6,7 +6,7 @@ module Hauer
     
     def arpeggio!(noten, opts = {})
       if noten.first.is_a? Array
-        return noten.map! {|n| arpeggio!(n)}
+        return noten.map! {|n| arpeggio!(n, opts)}
       end
       o = {
        :arp => nil,
