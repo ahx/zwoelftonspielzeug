@@ -26,7 +26,7 @@ module Zwoelftonspielzeug
       # TODO Fix midiator tco list midi devices!   
       # puts "There are#{MIDIator::Driver::CoreMIDI::C.mIDIGetNumberOfDestinations} midi destinations"
       # @interface.driver.destination = MIDIator::Driver::CoreMIDI::C.MIDIGetDestination(1)
-      @stimmen = []
+      @stimmen = []      
     end
 
  
@@ -42,19 +42,8 @@ module Zwoelftonspielzeug
     
     # Alle zwölf Takte soll etwas passieren
     def zwoelfschlag(zeit)
-      stimmen! # TODO remove
       stimmen_schedulen!(zeit)
       neustart_zwoelfschlag(zeit)
-    end
-            
-    # Stimmen default initialisieren
-    def stimmen!            
-      @stimmen = []
-      # @stimmen << @spiel.melodie(:gattung => 1)
-      # @stimmen << @spiel.klangreihe.map{|a| a.map{|n| n - 12} }
-      @stimmen << @spiel.melodie # 5. Gattung
-      # @stimmen << @spiel.melodie(:gattung => 2).map{|n| n + 24}
-      spiel.reihe
     end
     
     def stimmen_schedulen!(start)      
@@ -96,14 +85,19 @@ end
 
 
 a = Zwoelftonspielzeug::Automat.new
+s = a.spiel
 # a.spiel.akkordkrebs = true
 # a.spiel.umkehrung = 0
 # Reihe aus J.M. Hauers Zwölftonspiel für Cembalo oder Klavier 11. Juni 1955
 a.spiel.reihe =  [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
 a.start
-a.scheduler.join
+# a.scheduler.join
+#a.stimmen << s.melodie(:gattung => 1)
+#a.stimmen << s.klangreihe.map{|a| a.map{|n| n - 12} }
+a.stimmen << s.melodie # 5. Gattung
+#a.stimmen << s.melodie(:gattung => 2).map{|n| n + 24}
+
 # Live coding!
-# s = a.spiel
-# loop do
-#   eval gets
-# end
+loop do
+  eval gets
+end
