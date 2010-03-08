@@ -3,6 +3,8 @@
 require 'rubygems' # TODO Remove. Use Bundler
 require 'midiator'
 require 'gamelan'
+require 'osc-ruby'
+require 'osc-ruby/em_server'
 $LOAD_PATH << File.dirname(__FILE__) + '/lib'
 require 'hauer'
 
@@ -15,6 +17,27 @@ module Zwoelftonspielzeug
     class BasicObject; end
   end
   
+  class OSCInterface
+    def initialize(uri, port, options = {})
+      @note_on_path = options.fetch(:note_on_path, '/note_on')
+      @note_off_path = options.fetch(:note_off_path, '/note_off')
+      @client = OSC::Client.new(uri, port)
+    end
+        
+    def note_on(pitch, channel, velocity)
+      # p "note_on #{pitch}"
+      # NOTE Wir schicken hier in der Reihenfolge channel, pitch, velocity !
+      p [channel, pitch, velocity]
+      @client.send( OSC::Message.new( @note_on_path, channel, pitch, velocity ))
+    end
+    
+    def note_off(pitch, channel, velocity)
+      @client.send( OSC::Message.new( @note_off_path, channel, pitch, velocity ))
+    end
+    
+    def close; end # TODO Remove. This is just to look like a Midiator driver
+  end
+  
   # Empfängt parameter für das Zwölftonspiel und Sendet MIDI Signale 
   class Automat
     include Hauer::Notation
@@ -25,13 +48,19 @@ module Zwoelftonspielzeug
     def initialize
       @spiel = Hauer::Zwoelftonspiel.new
       @scheduler = Gamelan::Scheduler.new :tempo => 90
-      @interface = MIDIator::Interface.new
-      @interface.autodetect_driver
-      # @interface.use(:core_midi)
-      # @interface.use(:dls_synth)
-      # TODO Fix midiator tco list midi devices!   
-      # puts "There are#{MIDIator::Driver::CoreMIDI::C.mIDIGetNumberOfDestinations} midi destinations"
-      # @interface.driver.destination = MIDIator::Driver::CoreMIDI::C.MIDIGetDestination(1)
+      # DEBUG --
+      # @server = OSC::EMServer.new( 7777 )      
+      # @server.add_method '/note' do | message |
+      #   p message.to_a
+      # end
+      # Thread.new do
+      #   @server.run
+      # end
+      # -- DEBUG
+      
+      # Wir schicken note_on und note_off an die gleiche Adresse und schicken bei note_off velocity 0
+      # Das vereinfacht die Integration bei PureData
+      @interface = OSCInterface.new('localhost', 7777, :note_off_path => '/note', :note_on_path => '/note')
       @stimmen = []      
     end
 
@@ -72,7 +101,8 @@ module Zwoelftonspielzeug
     
     def play_note(time_in_beats, note, channel=10)
       @scheduler.at(time_in_beats + note.offset) { @interface.note_on(note.pitch, channel, note.velocity) }
-      @scheduler.at(time_in_beats + note.offset + note.value) { @interface.note_off(note.pitch, channel, note.velocity) }    
+      # 0 bei note_off (s.o.)
+      @scheduler.at(time_in_beats + note.offset + note.value) { @interface.note_off(note.pitch, channel, 0) }    
     end
     
     
@@ -113,10 +143,11 @@ p = Zwoelftonspielzeug::Proxy.new s
 # a.spiel.umkehrung = 2
 # Reihe aus J.M. Hauers Zwölftonspiel für Cembalo oder Klavier 11. Juni 1955
 a.spiel.reihe =  [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
-# a.stimmen << s.melodie(:gattung => 1)
-#a.stimmen << s.klangreihe.map{|a| a.map{|n| n - 12} }
+a.stimmen << p.melodie(:gattung => 3)
+a.stimmen << p.melodie(:gattung => 4)
 a.stimmen << p.melodie # 5. Gattung
-a.stimmen << proc { Hauer::Arpeggiator.arpeggio!(s.klangreihe, :reverse => s.akkordkrebs?) }
+# a.stimmen << p.klangreihe
+# a.stimmen << proc { Hauer::Arpeggiator.arpeggio!(s.klangreihe, :reverse => s.akkordkrebs?) }
 
 #a.stimmen << s.melodie(:gattung => 2).map{|n| n + 24}
 a.start
