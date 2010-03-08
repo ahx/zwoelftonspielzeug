@@ -48,6 +48,7 @@ module Zwoelftonspielzeug
     def initialize
       @spiel = Hauer::Zwoelftonspiel.new
       @scheduler = Gamelan::Scheduler.new :tempo => 90
+      @stimmen = []
       # DEBUG --
       # @server = OSC::EMServer.new( 7777 )      
       # @server.add_method '/note' do | message |
@@ -61,7 +62,9 @@ module Zwoelftonspielzeug
       # Wir schicken note_on und note_off an die gleiche Adresse und schicken bei note_off velocity 0
       # Das vereinfacht die Integration bei PureData
       @interface = OSCInterface.new('localhost', 7777, :note_off_path => '/note', :note_on_path => '/note')
-      @stimmen = []      
+      # Alter MIDI Treiber
+      # @interface = MIDIator::Interface.new
+      # @interface.use :dls_synth      
     end
 
  
