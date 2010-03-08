@@ -27,7 +27,6 @@ module Zwoelftonspielzeug
     def note_on(pitch, channel, velocity)
       # p "note_on #{pitch}"
       # NOTE Wir schicken hier in der Reihenfolge channel, pitch, velocity !
-      p [channel, pitch, velocity]
       @client.send( OSC::Message.new( @note_on_path, channel, pitch, velocity ))
     end
     
@@ -60,10 +59,11 @@ module Zwoelftonspielzeug
       # -- DEBUG
       
       # Wir schicken note_on und note_off an die gleiche Adresse und schicken bei note_off velocity 0
-      # Das vereinfacht die Integration bei PureData
+      # Das vereinfacht die Zusammenarbeit mit PureData
       @interface = OSCInterface.new('localhost', 7777, :note_off_path => '/note', :note_on_path => '/note')
       # Alter MIDI Treiber
       # @interface = MIDIator::Interface.new
+      # @interface.use :core_midi      
       # @interface.use :dls_synth      
     end
 
@@ -73,24 +73,25 @@ module Zwoelftonspielzeug
       @scheduler.run
     end
     
+    # Stop bei nächsten Zwölfschlag
     def stop
-      @scheduler.stop
-      @interface.close
+      @stop = true
     end
     
     # Alle zwölf Takte soll etwas passieren
-    def zwoelfschlag(zeit)
-      stimmen_schedulen!(zeit)
+    def zwoelfschlag(zeit)    
+      return puts "ctrl+c to quit!" if @stop  
+      stimmen_schedulen!(zeit)      
       neustart_zwoelfschlag(zeit)
     end
     
     def stimmen_schedulen!(start)      
       beat_offset = start
-      @stimmen.each { |stimme|
+      @stimmen.each_with_index { |stimme, index|
         beat_offset = start
-        noten = stimme.is_a?(Proc) ? stimme.call : stimme        
-        noten.each {|note|
-          beat_offset += _schedule_note(beat_offset, note)
+        noten = stimme.is_a?(Proc) ? stimme.call : stimme
+        noten.each {|note|      
+          beat_offset += _schedule_note(beat_offset, note, index+1) # channel !
         }
       }
       # @scheduler.at(beat_offset+1) { @scheduler.stop } # schedule shutdown
@@ -102,21 +103,21 @@ module Zwoelftonspielzeug
       @scheduler.at(zeit) { zwoelfschlag(zeit) }
     end        
     
-    def play_note(time_in_beats, note, channel=10)
+    def play_note(time_in_beats, note, channel)
       @scheduler.at(time_in_beats + note.offset) { @interface.note_on(note.pitch, channel, note.velocity) }
       # 0 bei note_off (s.o.)
       @scheduler.at(time_in_beats + note.offset + note.value) { @interface.note_off(note.pitch, channel, 0) }    
     end
     
     
-    def _schedule_note(beat_offset, note)
+    def _schedule_note(beat_offset, note, channel)
       # Bei listen von Noten gehen wir davon aus, dass alle Noten gleich lang sind! FIXME ?    
       case note 
       when Array
-        note.each{|n| play_note(beat_offset, n) }
+        note.each{|n| play_note(beat_offset, n, channel) }
         note.last.value + note.last.offset
       else
-        play_note(beat_offset, note)
+        play_note(beat_offset, note, channel)
         note.value + note.offset
       end
     end
@@ -128,11 +129,7 @@ module Zwoelftonspielzeug
     end
     def method_missing(name, *args)
       ::Kernel.raise ::NoMethodError.new(name) unless @receiver.respond_to? name
-      @name = name
-      @args = args
-      ::Proc.new {        
-        @receiver.send @name, *@args
-      }
+      ::Proc.new { @receiver.send name, *args }
     end
   end
 end
@@ -146,11 +143,12 @@ p = Zwoelftonspielzeug::Proxy.new s
 # a.spiel.umkehrung = 2
 # Reihe aus J.M. Hauers Zwölftonspiel für Cembalo oder Klavier 11. Juni 1955
 a.spiel.reihe =  [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
-a.stimmen << p.melodie(:gattung => 3)
-a.stimmen << p.melodie(:gattung => 4)
-a.stimmen << p.melodie # 5. Gattung
-# a.stimmen << p.klangreihe
+a.stimmen << p.klangreihe
 # a.stimmen << proc { Hauer::Arpeggiator.arpeggio!(s.klangreihe, :reverse => s.akkordkrebs?) }
+# a.stimmen << p.melodie(:gattung => 3)
+# a.stimmen << p.melodie(:gattung => 4)
+a.stimmen << p.melodie # 5. Gattung
+
 
 #a.stimmen << s.melodie(:gattung => 2).map{|n| n + 24}
 a.start
