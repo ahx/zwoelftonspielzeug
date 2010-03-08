@@ -5,6 +5,9 @@ module Hauer
     module_function
     
     def arpeggio!(noten, opts = {})
+      if noten.first.is_a? Array
+        return noten.map! {|n| arpeggio!(n)}
+      end
       o = {
        :arp => nil,
        :reverse => false

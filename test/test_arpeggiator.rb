@@ -8,15 +8,27 @@ require 'hauer/arpeggiator'
 
 class TestArpeggiator < Test::Unit::TestCase
   include Hauer::Notation
-  
-  def test_arpeggiator
-    noten = [Note(60, 1), Note(64, 1), Note(68, 1)]
-    Hauer::Arpeggiator.arpeggio!(noten)
+
+  def setup
+    @noten = [Note(60, 1), Note(64, 1), Note(68, 1)]
     teil = 1.0 / 3
-    assert_equal([
+    @arp = [
       Note(60, 1*0.9), # TODO Weg damit
       Note(64, 1 - teil, :offset => teil),
       Note(68, 1 - teil*2, :offset => teil*2)
-      ], noten)
+      ]
+  end
+  
+  def test_arpeggiator
+    Hauer::Arpeggiator.arpeggio!(@noten)
+    assert_equal(@arp, @noten)
+    # TODO test arp
+    assert Hauer::Arpeggiator.arpeggio!(@noten, :arp => 0.1)
+  end
+  
+  def test_nested
+    # test nested
+    Hauer::Arpeggiator.arpeggio!([@noten])
+    assert_equal([@arp], [@noten])
   end
 end
