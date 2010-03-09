@@ -4,7 +4,6 @@ require 'rubygems' # TODO Remove. Use Bundler
 require 'midiator'
 require 'gamelan'
 require 'osc-ruby'
-require 'osc-ruby/em_server'
 $LOAD_PATH << File.dirname(__FILE__) + '/lib'
 require 'hauer'
 
@@ -17,7 +16,7 @@ module Zwoelftonspielzeug
     class BasicObject; end
   end
   
-  class OSCInterface
+  class OSCOutput
     def initialize(uri, port, options = {})
       @note_on_path = options.fetch(:note_on_path, '/note_on')
       @note_off_path = options.fetch(:note_off_path, '/note_off')
@@ -35,6 +34,29 @@ module Zwoelftonspielzeug
     
     def close; end # FIXME Remove. This is just to look like a Midiator driver
   end
+
+  class OSCInput
+    def initialize(ziel, port)
+      @ziel = ziel
+      @eingang = OSC::EMServer.new( port )
+      configure
+    end
+
+    def configure
+      @eingang.add_method '/control' do | message |
+        p message.to_a
+      end
+      @eingang.add_method '/note' do | message |
+        p message.to_a
+      end
+    end      
+        
+    def start
+      Thread.new do
+        @eingang.run
+      end
+    end
+  end
   
   # Empfängt parameter für das Zwölftonspiel und Sendet MIDI Signale 
   class Automat
@@ -44,20 +66,20 @@ module Zwoelftonspielzeug
     attr_accessor :stimmen
  
     def initialize
-      @spiel = Hauer::Zwoelftonspiel.new
-      @scheduler = Gamelan::Scheduler.new :tempo => 80
       @stimmen = []
-      
+      @spiel = Hauer::Zwoelftonspiel.new
+      @scheduler = Gamelan::Scheduler.new :tempo => 80      
+      @eingang = OSCInput.new(self, 7778)
+      @eingang.start
       # Wir schicken note_on und note_off an die gleiche Adresse und schicken bei note_off velocity 0
       # Das vereinfacht die Zusammenarbeit mit PureData
-      @interface = OSCInterface.new('localhost', 7777, :note_off_path => '/note', :note_on_path => '/note')
+      @ausgang = OSCOutput.new('localhost', 7777, :note_off_path => '/note', :note_on_path => '/note')
       # Alter MIDI Treiber
-      # @interface = MIDIator::Interface.new
-      # @interface.use :core_midi      
-      # @interface.use :dls_synth      
+      # @ausgang = MIDIator::Interface.new
+      # @ausgang.use :core_midi      
+      # @ausgang.use :dls_synth
     end
 
- 
     def start
       zwoelfschlag(0)
       @scheduler.run
@@ -94,9 +116,9 @@ module Zwoelftonspielzeug
     end        
     
     def play_note(time_in_beats, note, channel)
-      @scheduler.at(time_in_beats + note.offset) { @interface.note_on(note.pitch, channel, note.velocity) }
+      @scheduler.at(time_in_beats + note.offset) { @ausgang.note_on(note.pitch, channel, note.velocity) }
       # 0 bei note_off (s.o.)
-      @scheduler.at(time_in_beats + note.offset + note.value) { @interface.note_off(note.pitch, channel, 0) }    
+      @scheduler.at(time_in_beats + note.offset + note.value) { @ausgang.note_off(note.pitch, channel, 0) }    
     end
     
     

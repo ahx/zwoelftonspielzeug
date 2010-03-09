@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
+require 'osc-ruby/em_server'
 require File.dirname(__FILE__) + '/zwoelftonspielzeug'
 a = Zwoelftonspielzeug::Automat.new
 s = a.spiel
@@ -33,17 +34,7 @@ a.stimmen << p.melodie(:gattung => 4)
 # a.spiel.akkordkrebs = true
 # a.spiel.umkehrung = 2
 
-# TODO Parameter über (MIDI) Hardware ändern!
-# @server = OSC::EMServer.new( 7778 )      
-# @server.add_method '/control' do | message |
-#   p message.to_a
-# end
-# Thread.new do
-#   @server.run
-# end
-
-# Spiel starten
-a.start
+puts 'Öffne pd/start.pd mit PureData, dann hier "a.start" eingeben.'
 # a.scheduler.join
 # Live coding!
 loop do  
