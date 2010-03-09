@@ -42,21 +42,12 @@ module Zwoelftonspielzeug
     include Hauer::Notation
     attr :spiel
     attr :scheduler
-    attr :stimmen
+    attr_accessor :stimmen
  
     def initialize
       @spiel = Hauer::Zwoelftonspiel.new
-      @scheduler = Gamelan::Scheduler.new :tempo => 90
+      @scheduler = Gamelan::Scheduler.new :tempo => 80
       @stimmen = []
-      # DEBUG --
-      # @server = OSC::EMServer.new( 7777 )      
-      # @server.add_method '/note' do | message |
-      #   p message.to_a
-      # end
-      # Thread.new do
-      #   @server.run
-      # end
-      # -- DEBUG
       
       # Wir schicken note_on und note_off an die gleiche Adresse und schicken bei note_off velocity 0
       # Das vereinfacht die Zusammenarbeit mit PureData
@@ -135,25 +126,42 @@ module Zwoelftonspielzeug
 end
 
 
-
+include Hauer::Utils
 a = Zwoelftonspielzeug::Automat.new
 s = a.spiel
 p = Zwoelftonspielzeug::Proxy.new s
 # a.spiel.akkordkrebs = true
 # a.spiel.umkehrung = 2
 # Reihe aus J.M. Hauers Zwölftonspiel für Cembalo oder Klavier 11. Juni 1955
-a.spiel.reihe =  [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
+# a.spiel.reihe = [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
+#
+# Reihe aus J.M. Hauers Zwölftonspiel für Flöte und Cembalo vom 31. August 1948
+# a.spiel.reihe = %w(h des d b as f es ges a fes c g).map!{ |n| note2midi(n)+48}
+#
+# Reihe aus "Passacaglia für Klavier" von einer Bamberger Gymnasialklasse 1974
+# http://www.musiker.at/sengstschmidjohann/mp3/sonstiges/passacaglia.mp3
+# http://www.klangreihenmusik.at/skriptum-passacaglia-01kl.php3
+# a.spiel.reihe = %w(e g cis d b c f a fis dis h gis).map{|n| note2midi(n) + 48}
+#
 a.stimmen << p.klangreihe
-# a.stimmen << proc { Hauer::Arpeggiator.arpeggio!(s.klangreihe, :reverse => s.akkordkrebs?) }
-# a.stimmen << p.melodie(:gattung => 3)
-# a.stimmen << p.melodie(:gattung => 4)
-a.stimmen << p.melodie # 5. Gattung
-
-
+# a.stimmen << p.melodie(:gattung => 2)
+# a.stimmen << proc { Hauer::Arpeggiator.arpeggio!(s.klangreihe, :reverse => s.akkordkrebs?) } #, :arp => 0.1
+# a.stimmen << p.melodie # 5. Gattung
+a.stimmen << p.melodie(:gattung => 4)
 #a.stimmen << s.melodie(:gattung => 2).map{|n| n + 24}
-a.start
 # a.stimmen << arp(p.klangreihe)
+#
 
+# TODO Parameter über (MIDI) Hardware ändern!
+# @server = OSC::EMServer.new( 7778 )      
+# @server.add_method '/control' do | message |
+#   p message.to_a
+# end
+# Thread.new do
+#   @server.run
+# end
+
+a.start
 # a.scheduler.join
 # Live coding!
 loop do  
