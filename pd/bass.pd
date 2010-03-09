@@ -1,4 +1,4 @@
-#N canvas 398 64 959 684 10;
+#N canvas 101 119 959 684 10;
 #X obj 266 522 dac~;
 #X obj 252 125 mtof;
 #X obj 424 405 *~;
@@ -16,7 +16,7 @@
 #X obj 174 348 +~;
 #X obj 186 424 *~;
 #X text 188 315 <-- Anzahl der Seitenbänder -->;
-#X text -56 234 Zweite Spur macht es etwas fetter;
+#X text -14 244 Zweite Spur macht es etwas fetter;
 #X obj 383 317 *~ 300;
 #X obj 137 317 *~ 400;
 #X obj 243 407 adsr 0.4 20 10 50 30;

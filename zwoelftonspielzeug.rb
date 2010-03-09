@@ -103,11 +103,11 @@ module Zwoelftonspielzeug
     attr :stimmen
     attr :proxy
  
-    def initialize
+    def initialize(opt = {})
       @stimmen = Struct.new(:bass, :tenor, :alt, :sopran).new
       @spiel = Hauer::Zwoelftonspiel.new
       @proxy = Proxy.new(@spiel)
-      @scheduler = Gamelan::Scheduler.new :tempo => 80      
+      @scheduler = Gamelan::Scheduler.new :tempo => opt.fetch(:tempo, 80)      
       @eingang = OSCInput.new(self, 7778)
       @eingang.start
       # Wir schicken note_on und note_off an die gleiche Adresse und schicken bei note_off velocity 0
