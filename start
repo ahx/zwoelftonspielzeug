@@ -8,6 +8,19 @@ p = a.proxy
 
 include Hauer::Utils
 
+puts <<HILFE
+
+☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ 
+
+  Hallo beim Zwölftonspielzeug - Frei nach den Erkenntnissen von 
+  Joseph Matthias Hauer, dem Erfinder der Zwölftonmusik.  
+
+  Wir starten mit einer Reihe aus J.M. Hauers Zwölftonspiel für 
+  Cembalo oder Klavier vom 11. Juni 1955.
+    reihe = #{a.spiel.reihe.inspect}
+  (Das sind  MIDI Töne…)
+HILFE
+puts " "
 # == Verschiedene Reihen
 # Reihe aus J.M. Hauers Zwölftonspiel für Cembalo oder Klavier 11. Juni 1955
 a.spiel.reihe = [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
@@ -33,9 +46,11 @@ a.spiel.reihe = [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
 # a.stimmen[3] = proc { Hauer::Arpeggiator.arpeggio!(s.klangreihe, :reverse => s.akkordkrebs?) } #, :arp => 0.1
 a.stimmen[3] = s.melodie(:gattung => 1)
 # a.spiel.akkordkrebs = true
-# a.spiel.umkehrung = 2
-
-puts 'Öffne pd/start.pd mit PureData, dann hier "a.start" eingeben.'
+# a.spiel.umkehrung = 2 
+# system "open #{File.expand_path(File.dirname(__FILE__))}/pd/start.pd"
+puts 'Bitte öffne pd/start.pd und drücke dann die  ↵ [Enter] Taste um zu starten.'
+gets
+a.start
 # a.scheduler.join
 # Live coding!
 loop do  
