@@ -35,19 +35,42 @@ module Zwoelftonspielzeug
     def close; end # FIXME Remove. This is just to look like a Midiator driver
   end
 
+  
+  # Bei MVC wäre das hier ein Controller    
   class OSCInput
     def initialize(ziel, port)
       @ziel = ziel
       @eingang = OSC::EMServer.new( port )
+      @spiel = @ziel.spiel
+      @proxy = @ziel.proxy
       configure
     end
 
     def configure
       @eingang.add_method '/control' do | message |
-        p message.to_a
+        value, controller, channel = message.to_a
+        case controller
+        when 1,2,3,4
+          puts "Stimme #{controller}: #{value}"
+          @ziel.stimmen[controller-1] = stimmvariation(value)
+        when 5
+          puts "Umkehrung: #{value}"
+          @spiel.umkehrung = value
+        when 6 
+          puts "Transposition: #{value}"
+          @spiel.transposition = value
+        else
+          p message.to_a
+        end
       end
       @eingang.add_method '/note' do | message |
-        p message.to_a
+        note, velocity, channel = p message.to_a
+      case note
+      when 39
+        # TODO toggle einbauen!        
+        @spiel.akkordkrebs = !velocity.zero?
+        puts "Akkordkrebs: #{@spiel.akkordkrebs? ? "Ja" : "Nein"}"
+      end
       end
     end      
         
@@ -56,6 +79,20 @@ module Zwoelftonspielzeug
         @eingang.run
       end
     end
+    
+    # Gibt je nach Wert eine Melodievariante / Klangreihe zurück
+    def stimmvariation(num)
+      {  
+        0 => @proxy.klangreihe,      
+        1 => @proxy.melodie(:gattung => 1),
+        2 => @proxy.melodie(:gattung => 2),
+        3 => @proxy.melodie(:gattung => 3),
+        4 => @proxy.melodie(:gattung => 4),
+        5 => @proxy.melodie(:gattung => 5),        
+        6 => proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?) },
+        7 => proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?, :arp => 0.1) }
+      }[num]
+    end
   end
   
   # Empfängt parameter für das Zwölftonspiel und Sendet MIDI Signale 
@@ -63,11 +100,13 @@ module Zwoelftonspielzeug
     include Hauer::Notation
     attr :spiel
     attr :scheduler
-    attr_accessor :stimmen
+    attr :stimmen
+    attr :proxy
  
     def initialize
-      @stimmen = []
+      @stimmen = Struct.new(:bass, :tenor, :alt, :sopran).new
       @spiel = Hauer::Zwoelftonspiel.new
+      @proxy = Proxy.new(@spiel)
       @scheduler = Gamelan::Scheduler.new :tempo => 80      
       @eingang = OSCInput.new(self, 7778)
       @eingang.start
@@ -97,10 +136,11 @@ module Zwoelftonspielzeug
       neustart_zwoelfschlag(zeit)
     end
     
-    def stimmen_schedulen!(start)      
+    def stimmen_schedulen!(start)
       beat_offset = start
       @stimmen.each_with_index { |stimme, index|
         beat_offset = start
+        next unless stimme
         noten = stimme.is_a?(Proc) ? stimme.call : stimme
         noten.each {|note|      
           beat_offset += _schedule_note(beat_offset, note, index+1) # channel !

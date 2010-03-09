@@ -4,13 +4,13 @@ require 'osc-ruby/em_server'
 require File.dirname(__FILE__) + '/zwoelftonspielzeug'
 a = Zwoelftonspielzeug::Automat.new
 s = a.spiel
-p = Zwoelftonspielzeug::Proxy.new(a.spiel)
+p = a.proxy
 
 include Hauer::Utils
 
 # == Verschiedene Reihen
 # Reihe aus J.M. Hauers Zwölftonspiel für Cembalo oder Klavier 11. Juni 1955
-# a.spiel.reihe = [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
+a.spiel.reihe = [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
 #
 # Reihe aus J.M. Hauers Zwölftonspiel für Flöte und Cembalo vom 31. August 1948
 # a.spiel.reihe = %w(h des d b as f es ges a fes c g).map!{ |n| note2midi(n)+48}
@@ -24,13 +24,13 @@ include Hauer::Utils
 # a.spiel.reihe = (60..71).to_a.shuffle
 
 # == Eigentschaften des Spiels ändern
-a.stimmen << p.klangreihe
-# a.stimmen << p.melodie(:gattung => 2)
-# a.stimmen << proc { Hauer::Arpeggiator.arpeggio!(s.klangreihe, :reverse => s.akkordkrebs?) } #, :arp => 0.1
-# a.stimmen << p.melodie # 5. Gattung
-a.stimmen << p.melodie(:gattung => 4)
-#a.stimmen << s.melodie(:gattung => 2).map{|n| n + 24}
-# a.stimmen << arp(p.klangreihe)
+# a.stimmen[0] = p.klangreihe
+# a.stimmen[0] = p.melodie(:gattung => 2)
+# a.stimmen[0] = proc { Hauer::Arpeggiator.arpeggio!(s.klangreihe, :reverse => s.akkordkrebs?) } #, :arp => 0.1
+# a.stimmen[1] p.melodie # 5. Gattung
+# a.stimmen[1] = p.melodie(:gattung => 4)
+#a.stimmen[2] s.melodie(:gattung => 2).map{|n| n + 24}
+# a.stimmen[3] arp(p.klangreihe)
 # a.spiel.akkordkrebs = true
 # a.spiel.umkehrung = 2
 
@@ -38,9 +38,9 @@ puts 'Öffne pd/start.pd mit PureData, dann hier "a.start" eingeben.'
 # a.scheduler.join
 # Live coding!
 loop do  
-  begin
+  # begin
     eval gets
-  rescue    
-    puts "???"
-  end
+  # rescue    
+    # puts "???"
+  # end
 end
