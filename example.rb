@@ -1,7 +1,5 @@
 # encoding: UTF-8
 
-# TODO siehe thrdcom.rb!
-
 require 'midiator'
 
 $LOAD_PATH << File.dirname(__FILE__) + '/lib'
