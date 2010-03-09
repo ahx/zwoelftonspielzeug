@@ -1,4 +1,4 @@
-#N canvas 627 116 813 668 10;
+#N canvas 688 136 813 668 10;
 #X obj 199 333 *~;
 #X obj 41 149 mtof;
 #X obj 85 305 *~;
@@ -11,8 +11,8 @@
 #X obj 97 272 osc~;
 #X obj 89 212 *~ 1600;
 #X obj 95 241 +~ 0.4;
-#X obj 261 244 adsr 0.8 80 280 15 60;
 #X text 21 17 Ein Cellorgelton;
+#X obj 261 244 adsr 0.7 80 274 15 60;
 #X connect 0 0 5 0;
 #X connect 0 0 5 1;
 #X connect 1 0 6 0;
@@ -21,9 +21,9 @@
 #X connect 4 0 7 0;
 #X connect 6 0 10 0;
 #X connect 7 0 1 0;
-#X connect 7 1 12 0;
+#X connect 7 1 13 0;
 #X connect 8 0 2 0;
 #X connect 9 0 2 1;
 #X connect 10 0 11 0;
 #X connect 11 0 9 0;
-#X connect 12 0 0 1;
+#X connect 13 0 0 1;
