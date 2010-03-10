@@ -176,9 +176,33 @@ class TestZwoelftonspiel < Test::Unit::TestCase
   end
   
   def test_transponiert
-    assert_equal (60..71), @spiel1.tonumfang
+    assert_equal 60..71, @spiel1.tonumfang
     @spiel1.transposition = +2
-    assert_equal (62..73), @spiel1.tonumfang
+    assert_equal 62..73, @spiel1.tonumfang
     assert_equal([71, 61, 62, 70, 68, 65, 63, 66, 69, 64, 60, 67].map{|n| n+2},  @spiel1.reihe)
+  end
+  
+  class Obs
+    attr :updated, :last_changed, :last_value, :last_origin
+    def update(attribute, value, origin)
+      @last_changed, @last_value, @last_origin = attribute, value, origin
+      @updated ||= 0
+      @updated += 1
+    end
+  end
+  
+  def test_observe
+    obs = Obs.new(0)
+    @spiel1.add_observer(obs)
+    # Change stuff…
+    @spiel1.reihe = [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50] 
+    @spiel1.akkordkrebs = true
+    @spiel1.umkehrung = 1
+    @spiel1.transposition = 1
+    assert_equal(4, obs.updated)
+    # Check params…
+    assert_equal(:transposition, obs.last_changed)
+    assert_equal(1, obs.last_value)
+    assert_equal(@spiel1, obs.last_origin)
   end    
 end

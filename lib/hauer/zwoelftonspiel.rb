@@ -20,27 +20,12 @@ module Hauer
     module_function :reihe_ok?
   end
 
+  require 'observer'
   # Konzipierung eines Zwölftonspiels
   # Siehe Sengstschmid http://www.klangreihenmusik.at/skriptum-rekonstruktion-01kl.php3
   # Siehe auch Götte, S.111 ff
   # Ruby 1.8.(7) does not like ö, so we use oe :(
-  class Zwoelftonspiel    
-    include Hauer::Notation
-    attr_accessor :reihe
-    
-    # Bei der "Umkehrung" werden die Inhalte der Dreitongruppen / Quadranten verschoben.
-    # Umkehrung 0 bedeutet, die Dreitongruppen sind analog zum Tonumfang / zur sortieren Reihe
-    # Umkehrung 1..11 bedeutet, dass die Noten über die Quadranten um n nach rechts rotiert werden
-    # Umkehrung 12 ist logischer weise gleich mit Umkehrung 0. 13 mit 1 etc.
-    attr_accessor :umkehrung
-        # Durch die (virtuelle) Transposition der Reihe wird die Klangreihe/Melodie transponiert. Siehe reihe
-    attr_accessor :transposition
-
-    # Akkordkrebs verwenden (true / false)
-    attr_accessor :akkordkrebs
-    attr :takt
-    def akkordkrebs?; akkordkrebs; end    
-        
+  class Zwoelftonspiel
     class Takt < Struct.new(:zaehler, :nenner)
       def laenge
         zaehler / nenner
@@ -55,6 +40,22 @@ module Hauer
         schlagzeit.zero?
       end
     end
+    
+    include Hauer::Notation
+    include Observable  
+    include ObservableAccessor
+    observable_accessor :reihe    
+    # Bei der "Umkehrung" werden die Inhalte der Dreitongruppen / Quadranten verschoben.
+    # Umkehrung 0 bedeutet, die Dreitongruppen sind analog zum Tonumfang / zur sortieren Reihe
+    # Umkehrung 1..11 bedeutet, dass die Noten über die Quadranten um n nach rechts rotiert werden
+    # Umkehrung 12 ist logischer weise gleich mit Umkehrung 0. 13 mit 1 etc.
+    observable_accessor :umkehrung
+    # Durch die (virtuelle) Transposition der Reihe wird die Klangreihe/Melodie transponiert. Siehe reihe
+    observable_accessor :transposition
+    # Akkordkrebs verwenden (true / false)
+    observable_accessor :akkordkrebs
+    attr :takt
+    def akkordkrebs?; akkordkrebs; end      
     
     def initialize
       # Das sind Midi-Töne. Es ginge auch 0..11, aber das wäre sehr tief.

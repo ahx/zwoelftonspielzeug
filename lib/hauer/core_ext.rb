@@ -1,5 +1,23 @@
 # encoding: UTF-8
 
+module ObservableAccessor
+  def self.included(klass)    
+    klass.extend ClassMethods
+  end
+  module ClassMethods
+    # NOTE We don't check if a value has really changed here.
+    def observable_accessor(name)
+      attr_accessor name
+      define_method("#{name}=") { |new_value|
+        instance_variable_set("@#{name}", new_value)
+        changed
+        notify_observers(name, new_value, self)
+      }
+    
+    end
+  end
+end
+
 class Array    
   # Taken from ActiveSupport   
   def in_groups(number, fill_with = nil)
