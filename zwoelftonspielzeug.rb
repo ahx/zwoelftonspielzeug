@@ -8,13 +8,8 @@ require 'hauer'
 
 module Zwoelftonspielzeug
   include Hauer::Notation
-
-  unless defined? BasicObject
-    warn "Defining BasicObject!"
-    # This is all we really need…
-    class BasicObject; end
-  end
   
+  # Schickt Noten an PureData
   class OSCOutput
     def initialize(uri, port, options = {})
       @note_on_path = options.fetch(:note_on_path, '/note_on')
@@ -33,8 +28,8 @@ module Zwoelftonspielzeug
     
     def close; end # FIXME Remove. This is just to look like a Midiator driver
   end
-
   
+  # Empfängt Eingaben vom MIDI Controller.
   # Bei MVC wäre das hier ein Controller    
   class OSCInput
     def initialize(ziel, port)
@@ -46,7 +41,7 @@ module Zwoelftonspielzeug
     end
 
     def configure
-      # NOTE Die control signale sind in PD schon auf den Bereich 0..9 gemapped.
+      # NOTE Die control signale sind in PD schon auf den Bereich 0..11 gemapped.
       @eingang.add_method '/control' do | message |
         value, controller, channel = message.to_a
         case controller
@@ -94,20 +89,31 @@ module Zwoelftonspielzeug
       }[num]
     end
   end
-  
+    
   # TODO...
   require 'em-websocket'
-  class WebsocketServer
-    @server_thread = Thread.new do    
-      EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 7779, :debug => true) do |ws|
-        ws.onopen    { ws.send "Hello Client!"}
-        ws.onmessage { |msg| ws.send "Pong: #{msg}" }
-        ws.onclose   { puts "WebSocket closed" }
-      end
+  class WebsocketServer    
+    def initialize(zeug)
+      @spiel = zeug.spiel
+      @spiel.add_observer(self)
+    end
+    
+    def update(param, value, origin)
+      puts param, value, origin
+    end
+    
+    def run
+      Thread.new {
+        EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 7779) { |ws|          
+          ws.onopen    { ws.send "Hello Client!"}
+          ws.onmessage { |msg| ws.send "Pong: #{msg} #{@spiel.reihe}" }
+          ws.onclose   { puts "WebSocket closed" }                    
+        }
+      }
     end
   end  
   
-  # Empfängt parameter für das Zwölftonspiel und Sendet MIDI Signale 
+  # Verbindet Zwölftonspiel mit Eingabe und Ausgabe und allem…
   class Automat
     include Hauer::Notation
     attr :spiel
@@ -115,11 +121,10 @@ module Zwoelftonspielzeug
     attr :stimmen
     attr :proxy
  
-    def initialize(opt = {})
+    def initialize
       @stimmen = Struct.new(:bass, :tenor, :alt, :sopran).new
       @spiel = Hauer::Zwoelftonspiel.new
-      @proxy = Proxy.new(@spiel)
-      @scheduler = Gamelan::Scheduler.new :tempo => opt.fetch(:tempo, 80)      
+      @proxy = Proxy.new(@spiel)      
       @eingang = OSCInput.new(self, 7778)
       @eingang.start
       # Wir schicken note_on und note_off an die gleiche Adresse und schicken bei note_off velocity 0
@@ -129,9 +134,12 @@ module Zwoelftonspielzeug
       # @ausgang = MIDIator::Interface.new
       # @ausgang.use :core_midi      
       # @ausgang.use :dls_synth
+      @websocket = WebsocketServer.new(self)
+      @websocket.run
     end
 
-    def start
+    def start(tempo = 80)
+      @scheduler = Gamelan::Scheduler.new :tempo => tempo
       zwoelfschlag(0)
       @scheduler.run
     end
@@ -141,9 +149,15 @@ module Zwoelftonspielzeug
       @stop = true
     end
     
+    def quit!
+      # @scheduler.stop
+      # @websocket.stop
+      Kernel.exit
+    end
+    
     # Alle zwölf Takte soll etwas passieren
     def zwoelfschlag(zeit)    
-      return puts "ctrl+c to quit!" if @stop  
+      return quit! if @stop
       stimmen_schedulen!(zeit)      
       neustart_zwoelfschlag(zeit)
     end
@@ -185,6 +199,13 @@ module Zwoelftonspielzeug
         note.value + note.offset
       end
     end
+  end
+  
+  # Hilfsklassen
+  unless defined? BasicObject
+    warn "Defining BasicObject!"
+    # This is all we really need…
+    class BasicObject; end
   end
   
   # Gibt einen Proc zurück, statt die Methode direkt aufzurufen. (Ganz nützlich.)

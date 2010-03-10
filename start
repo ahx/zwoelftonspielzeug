@@ -2,11 +2,11 @@
 # encoding: UTF-8
 require 'osc-ruby/em_server'
 require File.dirname(__FILE__) + '/zwoelftonspielzeug'
-a = Zwoelftonspielzeug::Automat.new :tempo => 70
-s = a.spiel
-p = a.proxy
-
 include Hauer::Utils
+@a = Zwoelftonspielzeug::Automat.new
+@spiel = @a.spiel
+@p = @a.proxy
+@stimmen = @a.stimmen
 
 puts <<HILFE
 
@@ -17,51 +17,63 @@ puts <<HILFE
 
   Wir starten mit einer Reihe aus J.M. Hauers Zwölftonspiel für 
   Cembalo oder Klavier vom 11. Juni 1955.
-    reihe = #{a.spiel.reihe.inspect}
+    @spiel.reihe = #{@spiel.reihe.inspect}
   (Das sind MIDI Töne…)
   
 HILFE
 # == Verschiedene Reihen
 # Reihe aus J.M. Hauers Zwölftonspiel für Cembalo oder Klavier 11. Juni 1955
-a.spiel.reihe = [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
+@spiel.reihe = [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
 
 # Reihe aus J.M. Hauers Zwölftonspiel für Flöte und Cembalo vom 31. August 1948
-# a.spiel.reihe = [59, 49, 50, 58, 56, 53, 51, 54, 57, 52, 48, 55]
+# @spiel.reihe = [59, 49, 50, 58, 56, 53, 51, 54, 57, 52, 48, 55]
 #
 # Reihe aus "Passacaglia für Klavier" von einer Bamberger Gymnasialklasse 1974
 # http://www.musiker.at/sengstschmidjohann/mp3/sonstiges/passacaglia.mp3
 # http://www.klangreihenmusik.at/skriptum-passacaglia-01kl.php3
-a.spiel.reihe = [52, 55, 49, 50, 58, 48, 53, 57, 54, 51, 59, 56]
+@spiel.reihe = [52, 55, 49, 50, 58, 48, 53, 57, 54, 51, 59, 56]
 #
 # Zufällig gewählte Reihe
-# a.spiel.reihe = (60..71).to_a.shuffle
+# @spiel.reihe = (60..71).to_a.shuffle
 
 # == Eigentschaften des Spiels ändern
-# a.stimmen[0] = p.klangreihe
-# a.stimmen[0] = p.melodie(:gattung => 2)
-# a.stimmen[0] = proc { Hauer::Arpeggiator.arpeggio!(s.klangreihe, :reverse => s.akkordkrebs?) } #, :arp => 0.1
-# a.stimmen[1] p.melodie # 5. Gattung
-# a.stimmen[1] = p.melodie(:gattung => 4)
-#a.stimmen[2] s.melodie(:gattung => 2)
-# a.stimmen[3] = proc { Hauer::Arpeggiator.arpeggio!(s.klangreihe, :reverse => s.akkordkrebs?) } #, :arp => 0.1
-a.stimmen[3] = s.melodie(:gattung => 5)
-# a.spiel.akkordkrebs = true
-# a.spiel.umkehrung = 2 
+# @stimmen[0] = @p.klangreihe
+# @stimmen[0] = @p.melodie(:gattung => 2)
+# @stimmen[0] = proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?) } #, :arp => 0.1
+# @stimmen[1] @p.melodie # 5. Gattung
+# @stimmen[1] = @p.melodie(:gattung => 4)
+# @stimmen[2] @spiel.melodie(:gattung => 2)
+# @stimmen[3] = proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?) } #, :arp => 0.1
+# @spiel.akkordkrebs = true
+# @spiel.umkehrung = 2 
+@stimmen[3] = @spiel.melodie(:gattung => 5)
 system "open #{File.expand_path(File.dirname(__FILE__))}/pd/start.pd"
-puts 'Bitte öffne pd/start.pd und drücke dann die  ↵ [Enter] Taste um zu starten.'
-gets
-# TODO puts "'q' um das Spiel zu beenden."
-#def q
-#  a.stop
-#end
+puts "Bitte öffne pd/start.pd"
+puts "Drücke die ↵ [Enter] Taste oder gebe vorher ein neues Tempo (jetzt: 80) ein um zu starten."
+tempo = gets.to_i
+tempo = tempo > 0 ? tempo : 80
+puts "䷎"
+# CLI
+puts "'stop' um das Spiel zu beenden."
+def stop
+  puts "stoppe..."
+  @a.stop
+end
+def spiel
+  @spiel
+end
+def stimmen
+  @stimmen
+end
 
-a.start
-# a.scheduler.join
+@a.start(tempo)
+# @a.scheduler.join
+
 # Live coding!
 loop do  
-  # begin
+  begin
     eval gets
-  # rescue    
-    # puts "???"
-  # end
+  rescue    
+    puts "???"
+  end
 end
