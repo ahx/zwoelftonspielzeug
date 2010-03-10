@@ -3,7 +3,7 @@ $(document).ready(function(){
 
   ws = new WebSocket("ws://localhost:7779/");
   ws.onmessage = function(evt) { $("#msg").append("<p>"+evt.data+"</p>"); };
-  ws.onclose = function() { debug("socket closed"); };
+  ws.onclose = function() { alert("Bitte Zwölftonspielzeug starten und neu laden."); };
   ws.onopen = function() {
     debug("connected...");
     ws.send("hello server");
