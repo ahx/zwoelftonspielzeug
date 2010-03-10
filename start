@@ -16,6 +16,9 @@ include Hauer::Utils
 @spiel = @a.spiel
 @p = @a.proxy
 
+puts `open #{File.expand_path(File.dirname(__FILE__))}/pd/start.pd`
+puts '...'
+system 'clear'
 puts <<HILFE
 
 ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ 
@@ -24,9 +27,9 @@ puts <<HILFE
   Joseph Matthias Hauer, dem Erfinder der Zwölftonmusik.  
 
   Wir starten mit einer Reihe aus J.M. Hauers Zwölftonspiel für 
-  Cembalo oder Klavier vom 11. Juni 1955.
+  Cembalo oder Klavier vom 11. Juni 1955:
+  
     @spiel.reihe = #{@spiel.reihe.inspect}
-  (Das sind MIDI Töne…)
   
 HILFE
 # == Verschiedene Reihen
@@ -48,9 +51,7 @@ HILFE
 # @stimmen[3] = proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?) } #, :arp => 0.1
 # @spiel.akkordkrebs = true
 # @spiel.umkehrung = 2 
-@a.stimmvariation!(:sopran, 5)
-system "open #{File.expand_path(File.dirname(__FILE__))}/pd/start.pd"
-puts "Bitte öffne pd/start.pd"
+@a.stimmvariation!(:sopran, 1)
 puts "Drücke die ↵ [Enter] Taste oder gebe vorher ein neues Tempo (jetzt: 80) ein um zu starten."
 tempo = gets.to_i
 tempo = tempo > 0 ? tempo : 80
