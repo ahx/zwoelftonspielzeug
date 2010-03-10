@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # Language: Denglisch
 require 'rubygems' # TODO Remove. Use Bundler
-require 'midiator'
+#require 'midiator'
 require 'gamelan'
 require 'osc-ruby'
 $LOAD_PATH << File.dirname(__FILE__) + '/lib'
@@ -64,7 +64,7 @@ module Zwoelftonspielzeug
         end
       end
       @eingang.add_method '/note' do | message |
-        note, velocity, channel = p message.to_a
+        note, velocity, channel = message.to_a
       case note
       when 39
         # TODO toggle einbauen!        
