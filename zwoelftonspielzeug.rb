@@ -1,6 +1,5 @@
 # encoding: UTF-8
 # Language: Denglisch
-require 'rubygems' # TODO Remove. Use Bundler
 #require 'midiator'
 require 'gamelan'
 require 'osc-ruby'
