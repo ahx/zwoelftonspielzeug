@@ -2,7 +2,7 @@
 
 require 'test/unit'
 
-$LOAD_PATH << File.dirname(__FILE__) + '/../lib'
+$LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
 require 'hauer/notation'
 require 'hauer/arpeggiator'
 

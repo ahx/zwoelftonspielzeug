@@ -2,8 +2,7 @@
 
 require 'test/unit'
 
-$LOAD_PATH << File.dirname(__FILE__) + '/../lib'
-require 'hauer/utils'
+require File.dirname(__FILE__) + '/../lib/hauer/utils'
 
 class TestUtils < Test::Unit::TestCase
   def test_note2midi

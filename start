@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
-require 'osc-ruby/em_server'
-require File.dirname(__FILE__) + '/zwoelftonspielzeug'
+require File.dirname(__FILE__) + '/lib/zwoelftonspielzeug'
 include Hauer::Utils
 @a = Zwoelftonspielzeug::Automat.new
 @spiel = @a.spiel

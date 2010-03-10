@@ -2,8 +2,8 @@
 
 require 'test/unit'
 
-$LOAD_PATH << File.dirname(__FILE__) + '/../lib'
-require 'hauer/notation'
+require File.dirname(__FILE__) + '/../lib/hauer/notation'
+
 class TestNotation < Test::Unit::TestCase
   include Hauer::Notation
   
