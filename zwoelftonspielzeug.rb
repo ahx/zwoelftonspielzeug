@@ -47,6 +47,7 @@ module Zwoelftonspielzeug
     end
 
     def configure
+      # NOTE Die control signale sind in PD schon auf den Bereich 0..9 gemapped.
       @eingang.add_method '/control' do | message |
         value, controller, channel = message.to_a
         case controller
