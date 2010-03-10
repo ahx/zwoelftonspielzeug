@@ -17,7 +17,7 @@ module Hauer
       noten = noten.reverse if o[:reverse]
       noten.each_with_index { |note, i|
         note.value -= teil * i
-        # TODO remove. Verhindert hackeln beim Abspielen(?). Behebt Rundungsfehler(?).
+        # FIXME remove. Verhindert hackeln beim Abspielen(?). Behebt Rundungsfehler(?).
         note.value *= 0.9 if i.zero? 
         note.offset += teil * i
       }

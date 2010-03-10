@@ -7,7 +7,6 @@ require 'hauer/core_ext'
 require 'hauer/notation'
 
 # TODO Schlusston bei Akkordkrebs noch mal Nachschlagen
-# TODO Mehrere Stimmen (?)
 # TODO Lambdoma, Stimmvertauschung (?)
 
 # Joseph Matthias Hauer ist der ursprüngliche Erfinder der Zwölftonmusik
@@ -52,7 +51,6 @@ module Hauer
         1.0 / nenner
       end
       
-      # TODO betont? 
       def betont?(schlagzeit)
         schlagzeit.zero?
       end
@@ -79,7 +77,7 @@ module Hauer
       array.each {|k| 
         klang = Array(k)
         klang.each_with_index { |note, schlagzeit|
-          # TODO Sonderfall: punktierte Note if klang.length == 1
+          # TODO Sonderfall (optional, togglebar): punktierte Achtel + Sechszehntel Note if klang.length == 1
           wert =  @takt.laenge / klang.length
           note = Hauer::Notation.Note(note, wert) 
           note.velocity = 92 if @takt.betont?(schlagzeit)
@@ -90,7 +88,7 @@ module Hauer
     end
     
     # Eine nach Dreitongruppen erstellte Klangreihe
-    # TODO refactor
+    # FIXME refactor
     # TODO Klangreihe mit großem Dur-Septakkord am Anfang generieren?! (vgl. Götte)
     def klangreihe
       kamm = Array.new(4)
@@ -122,14 +120,14 @@ module Hauer
     
     # Die aus der klangreihe automatisch abgeleitete Melodie
     # Auch Monophonie genannt
-    # TODO refactor
+    # FIXME refactor
     def melodie(opt = {})
       opt = {
         :gattung => 5    
       }.merge!(opt)      
       melo = []
       akkorde = self.klangreihe.map {|a| a.map(&:pitch)}
-      # TODO Wie wir hier vom zweiten einmal rum bis zum ersten Akkord laufen ist komisch.
+      # FIXME Wie wir hier vom zweiten einmal rum bis zum ersten Akkord laufen ist komisch.
       (1-akkorde.length..0).each_with_index { |akkord_i, i|
         prekord = akkorde[akkord_i-1] # startet bei [0]
         akkord = akkorde[akkord_i]    # startet bei [1]
@@ -189,7 +187,6 @@ module Hauer
     end
     
     def _wendeton_von_nach(von, nach)
-      # TODO
       von - nach
     end
     
