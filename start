@@ -5,7 +5,6 @@ include Hauer::Utils
 @a = Zwoelftonspielzeug::Automat.new
 @spiel = @a.spiel
 @p = @a.proxy
-@stimmen = @a.stimmen
 
 puts <<HILFE
 
@@ -36,16 +35,10 @@ HILFE
 # @spiel.reihe = (60..71).to_a.shuffle
 
 # == Eigentschaften des Spiels ändern
-# @stimmen[0] = @p.klangreihe
-# @stimmen[0] = @p.melodie(:gattung => 2)
-# @stimmen[0] = proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?) } #, :arp => 0.1
-# @stimmen[1] @p.melodie # 5. Gattung
-# @stimmen[1] = @p.melodie(:gattung => 4)
-# @stimmen[2] @spiel.melodie(:gattung => 2)
 # @stimmen[3] = proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?) } #, :arp => 0.1
 # @spiel.akkordkrebs = true
 # @spiel.umkehrung = 2 
-@stimmen[3] = @spiel.melodie(:gattung => 5)
+@a.stimmvariation!(:sopran, 5)
 system "open #{File.expand_path(File.dirname(__FILE__))}/pd/start.pd"
 puts "Bitte öffne pd/start.pd"
 puts "Drücke die ↵ [Enter] Taste oder gebe vorher ein neues Tempo (jetzt: 80) ein um zu starten."

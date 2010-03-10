@@ -7,12 +7,15 @@ require 'hauer'
 require 'zwoelftonspielzeug/osc_io'
 require 'zwoelftonspielzeug/websocket_io'
 
-module Zwoelftonspielzeug  
+require 'observer'
+module Zwoelftonspielzeug    
   # Verbindet Zwölftonspiel mit Eingabe und Ausgabe und allem…
   class Automat
+    include Observable
     include Hauer::Notation
     attr :spiel
     attr :scheduler
+    # NOTE Wenn stimme direkt per stimme[x]= verändert wird gibts keinen Event!
     attr :stimmen
     attr :proxy
  
@@ -37,6 +40,26 @@ module Zwoelftonspielzeug
       @scheduler = Gamelan::Scheduler.new :tempo => tempo
       zwoelfschlag(0)
       @scheduler.run
+    end
+    
+    # Gibt je nach Wert eine Melodievariante / Klangreihe zurück
+    def stimmvariation(num)
+      {  
+        0 => @proxy.klangreihe,      
+        1 => @proxy.melodie(:gattung => 1),
+        2 => @proxy.melodie(:gattung => 2),
+        3 => @proxy.melodie(:gattung => 3),
+        4 => @proxy.melodie(:gattung => 4),
+        5 => @proxy.melodie(:gattung => 5),        
+        6 => proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?) },
+        7 => proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?, :arp => 0.1) }
+      }[num]
+    end
+    
+    def stimmvariation!(stimmen_id, varianten_id)
+      @stimmen[stimmen_id] = stimmvariation(varianten_id)
+      changed
+      notify_observers(:stimme, {stimmen_id => varianten_id}, self)
     end
     
     # Stop bei nächsten Zwölfschlag

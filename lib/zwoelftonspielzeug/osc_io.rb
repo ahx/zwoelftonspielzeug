@@ -26,11 +26,11 @@ module Zwoelftonspielzeug
   # Empfängt Eingaben vom MIDI Controller.
   # Bei MVC wäre das hier ein Controller    
   class OSCInput
-    def initialize(ziel, port)
-      @ziel = ziel
+    def initialize(zeug, port)
+      @zeug = zeug
       @eingang = OSC::EMServer.new( port )
-      @spiel = @ziel.spiel
-      @proxy = @ziel.proxy
+      @spiel = @zeug.spiel
+      @proxy = @zeug.proxy
       configure
     end
 
@@ -40,13 +40,14 @@ module Zwoelftonspielzeug
         value, controller, channel = message.to_a
         case controller
         when 1,2,3,4
-          puts "Stimme #{controller}: #{value}"
-          @ziel.stimmen[controller-1] = stimmvariation(value)
+          # puts "Stimme #{controller}: #{value}"
+          stimme = controller
+          @zeug.stimmvariation!(stimme-1, value)
         when 5
-          puts "Umkehrung: #{value}"
+          # puts "Umkehrung: #{value}"
           @spiel.umkehrung = value
         when 6 
-          puts "Transposition: #{value}"
+          # puts "Transposition: #{value}"
           @spiel.transposition = value
         else
           p message.to_a
@@ -56,9 +57,9 @@ module Zwoelftonspielzeug
         note, velocity, channel = message.to_a
       case note
       when 39
-        # TODO toggle einbauen!        
+        # TODO toggle einbauen!
         @spiel.akkordkrebs = !velocity.zero?
-        puts "Akkordkrebs: #{@spiel.akkordkrebs? ? "Ja" : "Nein"}"
+        # puts "Akkordkrebs: #{@spiel.akkordkrebs? ? "Ja" : "Nein"}"
       end
       end
     end      
@@ -67,20 +68,6 @@ module Zwoelftonspielzeug
       Thread.new do
         @eingang.run
       end
-    end
-  
-    # Gibt je nach Wert eine Melodievariante / Klangreihe zurück
-    def stimmvariation(num)
-      {  
-        0 => @proxy.klangreihe,      
-        1 => @proxy.melodie(:gattung => 1),
-        2 => @proxy.melodie(:gattung => 2),
-        3 => @proxy.melodie(:gattung => 3),
-        4 => @proxy.melodie(:gattung => 4),
-        5 => @proxy.melodie(:gattung => 5),        
-        6 => proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?) },
-        7 => proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?, :arp => 0.1) }
-      }[num]
     end
   end  
 end
