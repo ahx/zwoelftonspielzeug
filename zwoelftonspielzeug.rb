@@ -95,6 +95,18 @@ module Zwoelftonspielzeug
     end
   end
   
+  # TODO...
+  require 'em-websocket'
+  class WebsocketServer
+    @server_thread = Thread.new do    
+      EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 7779, :debug => true) do |ws|
+        ws.onopen    { ws.send "Hello Client!"}
+        ws.onmessage { |msg| ws.send "Pong: #{msg}" }
+        ws.onclose   { puts "WebSocket closed" }
+      end
+    end
+  end  
+  
   # Empfängt parameter für das Zwölftonspiel und Sendet MIDI Signale 
   class Automat
     include Hauer::Notation

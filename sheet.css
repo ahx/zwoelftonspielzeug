@@ -1,0 +1,21 @@
+body {
+  background-color: #E3DBDD;
+  font-family: "Adobe Garamond Pro", serif;
+  font-style: normal;
+}
+#page {  
+  box-shadow:         1px 2px 3px 1px #232323;
+  -moz-box-shadow:    1px 2px 3px 1px #232323;
+  -webkit-box-shadow: 1px 2px 3px 1px #232323;
+  background-color: #F9F7E7;
+  padding: 20px 50px 50px 50px;  
+  text-align: center;
+  width: 720px;
+  min-height: 660px;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+#notes {
+  background: grey;
+}

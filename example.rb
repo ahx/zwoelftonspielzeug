@@ -48,10 +48,10 @@ require 'hauer/arpeggiator'
 @stimmen = []
 arp = spiel.klangreihe.map{|a| a.map{|n| n - 12} }.map{|a| Hauer::Arpeggiator.arpeggio!(a, :reverse => spiel.akkordkrebs) }
 # @stimmen << arp
-@stimmen << spiel.klangreihe.map{|a| a.map{|n| n - 12} }
+# @stimmen << spiel.klangreihe.map{|a| a.map{|n| n - 12} }
 # @stimmen << spiel.melodie(:gattung => 4)
 # @stimmen << spiel.klangreihe
-# @stimmen << spiel.melodie(:gattung => 5).each{|n| n.pitch += 12}
+@stimmen << spiel.melodie(:gattung => 5) #.each{|n| n.pitch += 12}
 @midi = midi
 require 'gamelan'
 @scheduler = Gamelan::Scheduler.new({:tempo => 100})
