@@ -16,22 +16,6 @@ include Hauer::Utils
 @spiel = @a.spiel
 @p = @a.proxy
 
-puts `open #{File.expand_path(File.dirname(__FILE__))}/pd/start.pd`
-puts '...'
-system 'clear'
-puts <<HILFE
-
-☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ 
-
-  Willkommen beim Zwölftonspielzeug - Frei nach den Erkenntnissen von 
-  Joseph Matthias Hauer, dem Erfinder der Zwölftonmusik.  
-
-  Wir starten mit einer Reihe aus J.M. Hauers Zwölftonspiel für 
-  Cembalo oder Klavier vom 11. Juni 1955:
-  
-    spiel.reihe = #{@spiel.reihe.inspect}
-  
-HILFE
 # == Verschiedene Reihen
 # Reihe aus J.M. Hauers Zwölftonspiel für Cembalo oder Klavier 11. Juni 1955
 @spiel.reihe = [57, 51, 48, 47, 55, 56, 49, 52, 46, 54, 53, 50]
@@ -52,6 +36,23 @@ HILFE
 # @spiel.akkordkrebs = true
 # @spiel.umkehrung = 2 
 @a.stimmvariation!(:sopran, 1)
+
+puts `open #{File.expand_path(File.dirname(__FILE__))}/pd/start.pd`
+puts '...'
+system 'clear'
+puts <<HILFE
+
+☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ ☯ ♫ 
+
+  Willkommen beim Zwölftonspielzeug - Frei nach den Erkenntnissen von 
+  Joseph Matthias Hauer, dem Erfinder der Zwölftonmusik.  
+
+  Wir starten mit einer Reihe aus J.M. Hauers Zwölftonspiel für 
+  Cembalo oder Klavier vom 11. Juni 1955:
+  
+    spiel.reihe = #{@spiel.reihe.inspect}
+  
+HILFE
 puts "Drücke die ↵ [Enter] Taste oder gebe vorher ein neues Tempo (jetzt: 80) ein um zu starten."
 tempo = gets.to_i
 tempo = tempo > 0 ? tempo : 80
