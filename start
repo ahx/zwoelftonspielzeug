@@ -42,7 +42,7 @@ HILFE
 # Reihe aus "Passacaglia für Klavier" von einer Bamberger Gymnasialklasse 1974
 # http://www.musiker.at/sengstschmidjohann/mp3/sonstiges/passacaglia.mp3
 # http://www.klangreihenmusik.at/skriptum-passacaglia-01kl.php3
-@spiel.reihe = [52, 55, 49, 50, 58, 48, 53, 57, 54, 51, 59, 56]
+# @spiel.reihe = [52, 55, 49, 50, 58, 48, 53, 57, 54, 51, 59, 56]
 #
 # Zufällig gewählte Reihe
 # @spiel.reihe = (60..71).to_a.shuffle

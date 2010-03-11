@@ -41,14 +41,14 @@ module Zwoelftonspielzeug
         value, controller, channel = message.to_a
         case controller
         when 1,2,3,4
-          puts "Stimme #{controller}: #{value}"
+          # puts "Stimme #{controller}: #{value}"
           stimme = controller
           @zeug.stimmvariation!(stimme-1, value)
         when 5
-          puts "Umkehrung: #{value}"
+          # puts "Umkehrung: #{value}"
           @spiel.umkehrung = value
         when 6 
-          puts "Transposition: #{value}"
+          # puts "Transposition: #{value}"
           @spiel.transposition = value
         else
           p message.to_a
@@ -60,7 +60,7 @@ module Zwoelftonspielzeug
       when 39
         # TODO toggle einbauen!
         @spiel.akkordkrebs = !velocity.zero?
-        puts "Akkordkrebs: #{@spiel.akkordkrebs? ? "Ja" : "Nein"}"
+        # puts "Akkordkrebs: #{@spiel.akkordkrebs? ? "Ja" : "Nein"}"
       end
       end
     end      

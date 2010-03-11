@@ -1,21 +1,29 @@
+@import "html5reset-1.4.1.css";
+
 body {
   background-color: #E3DBDD;
   font-family: "Adobe Garamond Pro", serif;
   font-style: normal;
+  font-size: 16px;
 }
+
+header {
+  margin-bottom: 60px;
+}
+header h1 {
+  font-size: 200%;
+  font-family: "Futura", sans-serif;
+}
+
 #page {  
   box-shadow:         1px 2px 3px 1px #232323;
   -moz-box-shadow:    1px 2px 3px 1px #232323;
   -webkit-box-shadow: 1px 2px 3px 1px #232323;
   background-color: #F9F7E7;
-  padding: 20px 50px 50px 50px;  
+  padding: 30px 50px 50px 50px;  
   text-align: center;
-  width: 720px;
-  min-height: 660px;
+  width: 700px;
+  min-height: 640px;
   margin: 0 auto;
-  margin-top: 20px;
-}
-
-#notes {
-  background: grey;
+  margin-top: 10px;
 }

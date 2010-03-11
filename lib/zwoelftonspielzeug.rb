@@ -2,6 +2,7 @@
 # Language: Denglisch
 #require 'midiator'
 require 'gamelan'
+
 $LOAD_PATH.unshift File.dirname(__FILE__)
 require 'hauer'
 require 'zwoelftonspielzeug/osc_io'
@@ -58,8 +59,9 @@ module Zwoelftonspielzeug
     
     def stimmvariation!(stimmen_id, varianten_id)
       @stimmen[stimmen_id] = stimmvariation(varianten_id)
+      key = "stimme-#{stimmen_id}".to_sym
       changed
-      notify_observers(:stimme, {stimmen_id => varianten_id}, self)
+      notify_observers(key ,varianten_id , self)
     end
     
     # Stop bei nächsten Zwölfschlag
@@ -68,8 +70,8 @@ module Zwoelftonspielzeug
     end
     
     def quit!
-      # @scheduler.stop
-      # @websocket.stop
+      # @scheduler.stop      
+      EventMachine::WebSocket.stop
       Kernel.exit
     end
     

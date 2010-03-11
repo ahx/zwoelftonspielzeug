@@ -9,10 +9,10 @@ module Zwoelftonspielzeug
       @channel = EM::Channel.new
     end
   
-    def update(param, value, origin, opts = {})
+    def update(name, value, origin, opts = {})
       msg = {
         :type => :update, 
-        :param => param, 
+        :key => name, 
         :value => value 
         }.merge!(opts)
       broadcast msg

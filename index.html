@@ -2,20 +2,43 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>Page Title</title>  
-  <link rel="stylesheet" href="sheet.css" type="text/css" media="screen" title="ein blatt" charset="utf-8">  
+  <title>Zwölftonspielzeug</title>  
+  <link rel="stylesheet" href="gui/sheet.css" type="text/css" media="screen" title="papier" charset="utf-8">  
 </head>
 <body>
   <div id="page">
-    <!-- <h1>Noten</h1> -->
-    <div id="debug"> </div>
-    <div id="notes">    
-    </div>    
-    <div id="msg">
+    <header>
+      <h1>Zwölftonspielzeug</h1>
+    </header>
+    
+    <div id="zyklus">
+    </div>
 
+    <table>
+      <tr><th>&nbsp;</th><th>Bass</th><th>Tenor</th><th>Alt</th><th>Sopran</th></tr>
+      <tr><td>Stimmführung</td>
+        <td id="wert-stimme-0">0</td>
+        <td id="wert-stimme-1">0</td>
+        <td id="wert-stimme-2">0</td>
+        <td id="wert-stimme-3">0</td>
+      </tr>
+    </table>
+    
+    <p>  
+    Umkehrung: <span id="wert-umkehrung">0</span>
+    Akkordkrebs: <span id="wert-akkordkrebs">Nein</span>
+    Transposition: <span id="wert-transposition">0</span>
+    </p>  
+    
+    <div id="zeitleiste">
+    </div>
+    
+    <div id="msg">
+    </div>
+    <div id="debug">
     </div>
   </div>  
-  <script src="js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>  
-  <script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+  <script src="gui/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>  
+  <script src="gui/js/app.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>
