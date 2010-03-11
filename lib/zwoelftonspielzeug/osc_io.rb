@@ -51,7 +51,7 @@ module Zwoelftonspielzeug
           # puts "Transposition: #{value}"
           @spiel.transposition = value
         else
-          p message.to_a
+          # p message.to_a
         end
       end
       @eingang.add_method '/note' do | message |

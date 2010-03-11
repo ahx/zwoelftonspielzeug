@@ -1,10 +1,10 @@
-#N canvas 688 136 813 668 10;
+#N canvas 627 136 813 668 10;
 #X obj 199 333 *~;
 #X obj 41 149 mtof;
 #X obj 85 305 *~;
 #X text 412 62 Amplitudenmodulation;
 #X obj 115 58 inlet;
-#X obj 181 418 dac~;
+#X obj 188 417 dac~;
 #X obj 88 182 osc~;
 #X obj 114 92 unpack f f;
 #X obj 21 242 osc~ 1;
@@ -13,8 +13,8 @@
 #X obj 95 241 +~ 0.4;
 #X text 21 17 Ein Cellorgelton;
 #X obj 261 244 adsr 0.7 80 274 15 60;
-#X connect 0 0 5 0;
-#X connect 0 0 5 1;
+#X obj 201 368 *~ 0.8;
+#X connect 0 0 14 0;
 #X connect 1 0 6 0;
 #X connect 1 0 8 0;
 #X connect 2 0 0 0;
@@ -27,3 +27,5 @@
 #X connect 10 0 11 0;
 #X connect 11 0 9 0;
 #X connect 13 0 0 1;
+#X connect 14 0 5 1;
+#X connect 14 0 5 0;
