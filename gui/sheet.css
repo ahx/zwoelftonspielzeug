@@ -2,17 +2,29 @@
 
 body {
   background-color: #E3DBDD;
-  font-family: "Adobe Garamond Pro", serif;
+  font-family: "Didot", serif;
+  color: #191919;
   font-style: normal;
-  font-size: 16px;
+  font-size: 18px;
+  line-height: 120%;
 }
-
 header {
+  text-align: center;
   margin-bottom: 60px;
 }
 header h1 {
   font-size: 200%;
-  font-family: "Futura", sans-serif;
+/*  font-family: "Didot", serif;*/
+}
+section {
+  margin: 30px 0px;
+}
+td, th {
+  padding: 2px 5px;
+}
+
+th {
+  text-align: left;
 }
 
 #page {  
@@ -20,10 +32,15 @@ header h1 {
   -moz-box-shadow:    1px 2px 3px 1px #232323;
   -webkit-box-shadow: 1px 2px 3px 1px #232323;
   background-color: #F9F7E7;
-  padding: 30px 50px 50px 50px;  
-  text-align: center;
-  width: 700px;
-  min-height: 640px;
+  padding: 35px 50px 50px 50px;  
+/*  text-align: center;*/
+  width: 680px;
+  min-height: 660px;
   margin: 0 auto;
   margin-top: 10px;
 }
+
+#stimmen {
+  
+}
+

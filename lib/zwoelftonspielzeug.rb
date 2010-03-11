@@ -60,8 +60,8 @@ module Zwoelftonspielzeug
     def stimmvariation!(stimmen_id, varianten_id)
       @stimmen[stimmen_id] = stimmvariation(varianten_id)
       key = "stimme-#{stimmen_id}".to_sym
-      changed
-      notify_observers(key ,varianten_id , self)
+      changed      
+      notify_observers(key , @stimmen[stimmen_id] ? varianten_id : nil , self)
     end
     
     # Stop bei nächsten Zwölfschlag
