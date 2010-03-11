@@ -6,18 +6,17 @@
   <link rel="stylesheet" href="gui/sheet.css" type="text/css" media="screen" title="papier">  
 </head>
 <body>
+  <div id="debug"></div>
   <div id="page">
     <!-- <hr></hr> -->
     
     <header>      
       <h1>Zwölftonspielzeug</h1>      
     </header>
-    
-    <div id="zyklus">
-    </div>
-
-    <section id="zeitleiste">
-      Zeitleiste
+        
+    <section>
+      <div id="zyklus">
+      </div>
     </section>
 
     <table id="stimmen">
@@ -39,7 +38,7 @@
         <th>Umkehrung:</th><td> <span id="wert-umkehrung">0</span></td>
       </tr>
       <tr>
-        <th>Transposition:</th><td><span id="wert-transposition">0</span></td>
+        <th>Transposition:</th><td>+<span id="wert-transposition">0</span></td>
       </tr>
     </table>    
     </section>
@@ -48,12 +47,11 @@
     Umkehrung: <span id="wert-umkehrung">0</span><br>
     Akkordkrebs: <span id="wert-akkordkrebs">Nein</span><br>
     Transposition: <span id="wert-transposition">0</span><br>
-    </section>   -->
-       
-    <div id="debug">
-    </div>
+    </section>   -->       
   </div>  
   <script src="gui/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>  
+  <script src="gui/js/raphael/raphael-min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="gui/js/underscore-min.js" type="text/javascript" charset="utf-8"></script>
   <script src="gui/js/app.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

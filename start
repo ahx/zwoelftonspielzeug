@@ -29,7 +29,7 @@ puts <<HILFE
   Wir starten mit einer Reihe aus J.M. Hauers Zwölftonspiel für 
   Cembalo oder Klavier vom 11. Juni 1955:
   
-    @spiel.reihe = #{@spiel.reihe.inspect}
+    spiel.reihe = #{@spiel.reihe.inspect}
   
 HILFE
 # == Verschiedene Reihen

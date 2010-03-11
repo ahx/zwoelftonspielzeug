@@ -6,12 +6,12 @@ module ObservableAccessor
   end
   module ClassMethods
     # NOTE We don't check if a value has really changed here.
-    def observable_accessor(name)
-      attr_accessor name
-      define_method("#{name}=") { |new_value|
-        instance_variable_set("@#{name}", new_value)
+    def observable_accessor(ace)
+      attr_accessor ace
+      define_method("#{ace}=") { |new_value|
+        instance_variable_set("@#{ace}", new_value)
         changed
-        notify_observers(name, new_value, self)
+        notify_observers(ace, new_value, self)
       }
     
     end

@@ -6,15 +6,16 @@ module Zwoelftonspielzeug
     def initialize(zeug)
       zeug.spiel.add_observer(self)
       zeug.add_observer(self)
+      @zeug = zeug
       @channel = EM::Channel.new
     end
   
-    def update(name, value, origin, opts = {})
+    def update(name, value, origin)
       msg = {
         :type => :update, 
         :key => name, 
         :value => value 
-        }.merge!(opts)
+        }
       broadcast msg
     end
   
@@ -25,9 +26,18 @@ module Zwoelftonspielzeug
     def run
       Thread.new {
         EventMachine::WebSocket.start(:host => '0.0.0.0', :port => 7779) { |ws|          
-          ws.onopen   { @channel.subscribe { |msg| ws.send msg } }
-          # ws.onmessage { |msg| ws.send "Pong: #{msg} #{@spiel.reihe}" }
-          ws.onclose  { puts "WebSocket closed" }    
+          ws.onopen   { 
+            @channel.subscribe { |msg| ws.send msg }             
+            }
+          ws.onmessage { |msg|  
+            ws.send({   
+              :type => :init,           
+              :data => {                
+                :reihe => @zeug.spiel.reihe
+              }
+            }.to_json)
+          }
+          # ws.onclose  { puts "WebSocket closed" }    
         }
       }
     end

@@ -7,7 +7,7 @@ Von Andreas Haller <andreashaller@gmail.com>
 So geht's:
   * starte ./start
   * Läuft pd/start.pd ?
-  * Öffne index.html in Google Chrome
+  * Ist das Akai LPD8 an PD angeschossen? (vielleicht klappts auch mit einem anderen controller)
+  * Öffne index.html in Google Chrome (http://www.google.com/chrome)
 
-
-TODO Write a little more…
+TODO Etwas mehr Erklären…
