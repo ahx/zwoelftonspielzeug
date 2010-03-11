@@ -1,8 +1,8 @@
 // Globals
 var zyklus;
 var Data;
+var ws;
 function drawCycle() {
-  console.log("drawCycle");
   var notes = Data.reihe;
   var width = 650;
   var height = 380;
@@ -86,10 +86,10 @@ function init() {
 }
 
 $(document).ready(function(){
-  function debug(str){ $("#debug").append("<p>" +  str); }
-  var ws = new WebSocket("ws://localhost:7779/");
+  ws = new WebSocket("ws://localhost:7779/");
   ws.onmessage = function(evt) { 
     var data = JSON.parse(evt.data)
+    // consoles.log(data);
     switch(data.type) {
       case 'init':
         Data = data.data;
@@ -98,7 +98,6 @@ $(document).ready(function(){
       case 'update':
         update(data);
       break;
-      default: debug("Dunno " + data.type);
     }
   };
   ws.onclose = function() { 
