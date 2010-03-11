@@ -29,7 +29,8 @@ module Zwoelftonspielzeug
           ws.onopen   { 
             @channel.subscribe { |msg| ws.send msg }             
             }
-          ws.onmessage { |msg|  
+          ws.onmessage { |msg| 
+            return unless msg == 'hello'
             ws.send({   
               :type => :init,           
               :data => {                
@@ -37,7 +38,7 @@ module Zwoelftonspielzeug
               }
             }.to_json)
           }
-          # ws.onclose  { puts "WebSocket closed" }    
+          ws.onclose  { puts "WebSocket closed" }    
         }
       }
     end
