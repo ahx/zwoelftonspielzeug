@@ -98,7 +98,11 @@ $(document).ready(function(){
     }
   };
   ws.onclose = function() { 
-    alert("Bitte Zwölftonspielzeug starten und neu laden."); 
+    if(confirm("Bitte Zwölftonspielzeug (start) starten.")){      
+    window.location.reload();
+    } else {
+    window.close();  
+    }
   };
   ws.onopen = function(evt) {  
     ws.send("hello"); 
