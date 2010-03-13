@@ -1,13 +1,14 @@
 Zwölftonspielzeug 
 ------------------
-Frei nach den Erkenntnissen von Joseph Matthias Hauer, dem Erfinder der Zwölftonmusik.
+Frei nach den Erkenntnissen von Joseph Matthias Hauer, dem Entdecker der Zwölftonmusik.
 
-Von Andreas Haller <andreashaller@gmail.com>
 
 So geht's:
-  * starte ./start
+  * starte das "start" script
   * Läuft pd/start.pd ?
-  * Ist das Akai LPD8 an PD angeschossen? (vielleicht klappts auch mit einem anderen controller)
   * Öffne index.html in Google Chrome (http://www.google.com/chrome)
+  * Ist das Akai LPD8 an PD angeschossen? (vielleicht klappts auch mit einem anderen controller)
 
-TODO Etwas mehr Erklären…
+
+
+Von Andreas Haller <andreashaller@gmail.com>
