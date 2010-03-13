@@ -1,3 +1,9 @@
+// Get chrome
+if(typeof(WebSocket) == "undefined") {
+  alert("Ihr Browser unterstützt keine Websockets. Bitte benutzen Sie Google Chrome.");
+  window.location.replace("http://www.google.com/chrome/");
+}
+
 var ws;
 // The thing
 var zwoelftonspielzeug = {
