@@ -10,10 +10,8 @@ var zwoelftonspielzeug = {
   data: {},
   
   init: function(data) {    
-    this.zyklus = Raphael("zyklus", 650, 390);
-    // this.noten = Raphael("noten", 650, 150); 
+    this.zyklus = Raphael("zyklus", 650, 410);
     this.update(data);
-    // this.attachListeners();
   },
       
   drawCycle: function() {
@@ -34,16 +32,26 @@ var zwoelftonspielzeug = {
     "#4C654F"
     ];
     _.times(12, function(i){     
-      var radius = 188-(i*15);
+      var radius = 188-(i*15);      
       r.circle(r.width/2, r.height/2, radius).attr({
         "stroke": "#222",
         "stroke-width": 1,
         "stroke-opacity": 0,
         "fill": "white",
         "fill-opacity": 0,
-      }).animate({fill: colors[i], "stroke-opacity": 0.6, "fill-opacity": 0.9 }, Math.random()*1500 + 500 , 'backOut');
+      }).animate({fill: colors[i], "stroke-opacity": 0.6, "fill-opacity": 1 }, Math.random()*1500 + 500 , 'backOut');      
     });
     this._drawRow();
+  },
+  
+  // Zeiger
+  drawZeiger: function(i) {
+    var r = this.zyklus;
+    if(!this.zeiger) {
+      var p = 'M'+(r.width/2)+' '+(r.height/2)+'L'+(r.width/2)+' '+(r.height/2 - 214)+'';
+      this.zeiger = r.path(p).attr({stroke: "#CAAC97", "stroke-width": 12 }).toBack();
+    }    
+    if(i < 12) this.zeiger.rotate(360/12 * i, r.width/2, r.height/2)
   },
 
   // FIXME Refactor  
@@ -54,8 +62,10 @@ var zwoelftonspielzeug = {
       var orb = 15*note + 22;
       var x = (Math.sin(deg)*orb)+r.width/2;
       var y = (Math.cos(deg)*orb)+r.height/2;
+      var p = 'M'+(r.width/2)+' '+(r.height/2)+'L'+((Math.sin(deg)*214)+r.width/2)+' '+((Math.cos(deg)*214)+r.height/2)+'';
+      r.path(p).attr({stroke: "#CAAC97" }).toBack();
       return [x, y];
-    });
+    });    
     var mapleP = "M"+pos[0][0]+" "+pos[0][1]
     for (var i = pos.length - 1; i >= 0; i--) {    
       mapleP += "L"+pos[i][0]+" "+pos[i][1];
@@ -124,16 +134,7 @@ var zwoelftonspielzeug = {
   },
   
   metrum: function(data) {
-    // console.log(data.beat_index);
-    // this.beat_index = data.beat_index;
-    // if(data.beat_index == 0)
-      // this.noten.clear();
-    // $("h1").toggle(); 
-    // TODO Aktuellen Schlag anzeigen
-  },
-  
-  kontinuum: function(note) {
-    // this.noten.circle((this.noten.width/12*this.beat_index), this.noten.height/12*(note.pitch % 12), 10).attr({fill: Raphael.getColor() })
+    this.drawZeiger(data.beat_index);
   }
 }
 
