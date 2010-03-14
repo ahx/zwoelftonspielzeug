@@ -111,6 +111,9 @@ var zwoelftonspielzeug = {
     $('select#wert-transposition').change(function(evt) {
       ws.send(JSON.stringify({transposition: $(this).val()}));
     });
+    $('#alea').click(function(evt) {
+      ws.send('alea');
+    });
     _.each(['bass', 'tenor', 'alt', 'sopran'],function(s) {
       $('#stimmen input[name=wert-stimme-'+s+']').change(function(evt) {
         msg = {stimme: {}};

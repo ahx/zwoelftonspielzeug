@@ -59,9 +59,10 @@ module Zwoelftonspielzeug
         note, velocity, channel = message.to_a
       case note
       when 39
-        # TODO toggle einbauen!
+        # FIXME toggle einbauen!
         @spiel.akkordkrebs = !velocity.zero?
-        # puts "Akkordkrebs: #{@spiel.akkordkrebs? ? "Ja" : "Nein"}"
+      when 60
+        @spiel.reihe = @spiel.reihe.shuffle if !velocity.zero?
       end
       end
     end      

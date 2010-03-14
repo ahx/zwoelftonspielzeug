@@ -39,7 +39,9 @@ module Zwoelftonspielzeug
                   :transposition => @zeug.spiel.transposition                
                 }
               }.to_json)
-            else            
+            elsif(msg == 'alea')            
+              @zeug.spiel.reihe = @zeug.spiel.reihe.shuffle
+            else
               handle_message(JSON.parse(msg))
             end
           }

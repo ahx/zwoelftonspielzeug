@@ -29,6 +29,11 @@ table .desc {
   text-align: right;
   color: #4C4C4C;
 }
+a, a:visited {
+  color: inherit;
+  text-decoration: none;
+}
+
 #page {  
   box-shadow:         1px 2px 3px 1px #232323;
   -moz-box-shadow:    1px 2px 3px 1px #232323;
@@ -64,6 +69,24 @@ table#stimmen tr + tr {
 #spiel th {
   text-align: right;
 }
-
+#alea:hover {
+  opacity: 1;
+  -moz-opacity: 1;
+  filter:alpha(opacity=1);
+}
+#alea {
+  opacity: 0.5;
+  -moz-opacity: 0.5;
+  filter:alpha(opacity=50);
+  position: absolute;
+  top: 218px;
+  left: 540px;
+}
+#alea .desc {
+  display: none;
+}
+#alea:hover .desc {
+  display: inline;
+}
 
 
