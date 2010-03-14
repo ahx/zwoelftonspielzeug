@@ -68,9 +68,6 @@ end
 def spiel
   @spiel
 end
-def stimmen
-  @stimmen
-end
 
 @a.start(tempo)
 # @a.scheduler.join

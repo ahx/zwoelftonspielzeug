@@ -43,9 +43,8 @@ module Zwoelftonspielzeug
         value, controller, channel = message.to_a
         case controller
         when 1,2,3,4
-          # puts "Stimme #{controller}: #{value}"
-          stimme = controller
-          @zeug.stimmvariation!(stimme-1, value)
+          stimme = [:bass, :tenor, :alt, :sopran][controller-1]
+          @zeug.stimmvariation!(stimme, value)
         when 5
           # puts "Umkehrung: #{value}"
           @spiel.umkehrung = value

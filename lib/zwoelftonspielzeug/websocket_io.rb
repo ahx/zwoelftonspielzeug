@@ -29,19 +29,46 @@ module Zwoelftonspielzeug
             @channel.subscribe { |msg| ws.send msg }             
             }
           ws.onmessage { |msg| 
-            return unless msg == 'init'
-            ws.send({   
-              :type => :init,           
-              :data => {                
-                :reihe => @zeug.spiel.reihe,
-                :umkehrung => @zeug.spiel.umkehrung,
-                :akkordkrebs => @zeug.spiel.akkordkrebs?,
-                :transposition => @zeug.spiel.transposition                
-              }
-            }.to_json)
+            if(msg == 'init')
+              ws.send({   
+                :type => :init,           
+                :data => {                
+                  :reihe => @zeug.spiel.reihe,
+                  :umkehrung => @zeug.spiel.umkehrung,
+                  :akkordkrebs => @zeug.spiel.akkordkrebs?,
+                  :transposition => @zeug.spiel.transposition                
+                }
+              }.to_json)
+            else            
+              handle_message(JSON.parse(msg))
+            end
           }
           ws.onclose  { puts "WebSocket closed" }    
         }
+      }
+    end
+    
+    def handle_message(msg)
+      # FIXME DRY
+      return unless msg.is_a? Hash
+      msg.each { |key, value|
+        case key.to_sym
+        when :umkehrung
+          @zeug.spiel.umkehrung = value.to_i
+          break;
+        when :transposition
+          @zeug.spiel.transposition = value.to_i
+          break;
+        when :akkordkrebs
+          @zeug.spiel.akkordkrebs = !!value
+          break;
+        when :stimme
+          return unless value.is_a? Hash
+          value.each{|stimme, variante|
+            @zeug.stimmvariation!(stimme.to_sym, variante.to_i)
+          }          
+          break;
+        end
       }
     end
   end

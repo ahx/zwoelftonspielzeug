@@ -13,6 +13,7 @@ var zwoelftonspielzeug = {
     this.zyklus = Raphael("zyklus", 650, 390);
     // this.noten = Raphael("noten", 650, 150); 
     this.update(data);
+    // this.attachListeners();
   },
       
   drawCycle: function() {
@@ -79,12 +80,12 @@ var zwoelftonspielzeug = {
     if(this[event]) this[event](data);
   },
   
-  update: function(data) {
+  update: function(data) {    
     for (var attr in data)  {      
       this.data[attr] = data[attr];   // store data
       switch(attr) {
         case 'akkordkrebs':
-          $('input[name=wert-akkordkrebs]').attr('checked', data[attr]);
+          $('input#wert-akkordkrebs').attr('checked', data[attr]);
           break;
         case 'reihe':
           this.drawCycle();
@@ -94,11 +95,29 @@ var zwoelftonspielzeug = {
           $('select[name=wert-'+attr+'] option[value='+data[attr]+']').attr('selected', true);      
           break;
         default:
-          if( attr.match("stimme")) {
+          if( attr.match("stimme"))
             $('input[name=wert-'+attr+'][value='+(data[attr] || 'off')+']').click();
-          } 
       }
     }
+  },
+  
+  attachListeners: function() {
+    $('input#wert-akkordkrebs').change(function(evt) {   
+      ws.send(JSON.stringify({akkordkrebs: $(this).is(':checked')}));
+    });
+    $('select#wert-umkehrung').change(function(evt) {
+      ws.send(JSON.stringify({umkehrung: $(this).val()}));
+    });
+    $('select#wert-transposition').change(function(evt) {
+      ws.send(JSON.stringify({transposition: $(this).val()}));
+    });
+    _.each(['bass', 'tenor', 'alt', 'sopran'],function(s) {
+      $('#stimmen input[name=wert-stimme-'+s+']').change(function(evt) {
+        msg = {stimme: {}};
+        msg.stimme[s] = $(this).val();
+        ws.send(JSON.stringify(msg));
+      });
+    })
   },
   
   metrum: function(data) {
@@ -116,6 +135,7 @@ var zwoelftonspielzeug = {
 }
 
 $(document).ready(function(){
+  zwoelftonspielzeug.attachListeners();
   ws = new WebSocket("ws://localhost:7779/");
   ws.onmessage = function(evt) { 
     var event = JSON.parse(evt.data)
