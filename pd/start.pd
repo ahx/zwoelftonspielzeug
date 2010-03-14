@@ -1,6 +1,6 @@
 #N canvas 262 162 1079 656 10;
 #X declare -lib mrpeach;
-#X obj -62 -78 udpreceive 7777;
+#X obj -89 -77 udpreceive 7777;
 #X obj 64 -16 unpackOSC;
 #X obj 64 8 routeOSC /note;
 #X obj 215 136 pack f f f;
@@ -14,8 +14,8 @@
 #X msg -355 -86 connect localhost 7778;
 #X obj -296 368 packOSC;
 #X obj -355 -110 loadbang;
-#X obj -62 -100 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
-1 1;
+#X obj -89 -99 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
 #X msg -215 329 send /control \$1 \$2 \$3;
 #X obj -302 305 pack 0 0 0;
 #X msg -349 330 send /note \$1 \$2 \$3;
@@ -33,14 +33,14 @@
 #X obj -215 305 pack 0 0 0;
 #X obj -150 285 int;
 #X obj -150 261 maxlib/scale 0 127 0 11;
-#X text -124 -78 Ok? --->;
+#X text -151 -77 Ok? --->;
 #X text -359 -161 Zwölftonspielzeug;
 #X obj 515 81 poly 8;
-#X text -157 -101 Verbunden? -->;
+#X text -184 -100 Verbunden? -->;
 #X text -359 -140 ------------------;
 #X obj 214 264 tenor;
-#X obj -54 -12 catch~ DAC;
-#X obj -64 44 output~;
+#X obj -81 -11 catch~ DAC;
+#X obj -91 45 output~;
 #X obj 67 252 bass;
 #X obj 270 270 tenor;
 #X obj 214 240 tenor;
@@ -106,9 +106,9 @@
 #X obj 420 240 alt;
 #X obj 420 216 alt;
 #X obj 420 192 alt;
-#X text -204 49 Gesamtlautstärke --->;
-#X obj 1 9 loadbang;
-#X obj -54 12 *~ 0.7;
+#X text -231 50 Gesamtlautstärke --->;
+#X obj -6 4 loadbang;
+#X obj -81 13 *~ 0.7;
 #X obj 516 252 sopran;
 #X obj 516 180 sopran;
 #X obj 516 204 sopran;
@@ -117,8 +117,10 @@
 #X obj 570 208 sopran;
 #X obj 570 184 sopran;
 #X text 64 -38 OSC Verbindung zum Empfang von Noten;
-#X msg 17 31 1;
+#X msg 3 49 1;
 #X obj 524 -139 import mrpeach;
+#X obj -74 202 delay;
+#X obj -6 27 delay 1000;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
 #X connect 2 0 4 0;
@@ -196,9 +198,10 @@
 #X connect 62 0 3 0;
 #X connect 62 1 3 1;
 #X connect 62 2 3 2;
-#X connect 71 0 81 0;
-#X connect 71 0 39 2;
+#X connect 71 0 84 0;
 #X connect 72 0 39 0;
 #X connect 72 0 39 1;
 #X connect 72 0 52 0;
 #X connect 81 0 39 2;
+#X connect 84 0 81 0;
+#X connect 84 0 39 2;
