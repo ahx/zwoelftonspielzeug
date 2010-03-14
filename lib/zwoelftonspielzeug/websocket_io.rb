@@ -10,11 +10,10 @@ module Zwoelftonspielzeug
       @channel = EM::Channel.new
     end
   
-    def update(name, value, origin)
+    def update(origin, event, data)
       msg = {
-        :type => :update, 
-        :key => name, 
-        :value => value 
+        :type => event, 
+        :data => data
         }
       broadcast msg
     end

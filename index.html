@@ -18,36 +18,124 @@
       <div id="zyklus">
       </div>
     </section>
-
+    
+<!--     
+    <section>
+      <div id="noten">
+      </div>
+    </section> -->
+    <section id="eigenschaften">
     <table id="stimmen">
-      <tr><th>Bass</th><th>Tenor</th><th>Alt</th><th>Sopran</th></tr>
+      <tr><th></th><th>Bass</th><th>Tenor</th><th>Alt</th><th>Sopran</th></tr>
       <tr>
-        <td id="wert-stimme-0">x</td>
-        <td id="wert-stimme-1">x</td>
-        <td id="wert-stimme-2">x</td>
-        <td id="wert-stimme-3">x</td>
+        <th class="desc">Stumm</th>
+        <td><input type="radio" value="off" name="wert-stimme-0" /></td>
+        <td><input type="radio" value="off" name="wert-stimme-1" /></td>
+        <td><input type="radio" value="off" name="wert-stimme-2" /></td>
+        <td><input type="radio" value="off" name="wert-stimme-3" /></td>
+      </tr>      
+      <tr>
+        <th class="desc">Kontinuum</th>
+        <td><input type="radio" value="1" name="wert-stimme-0" /></td>
+        <td><input type="radio" value="1" name="wert-stimme-1" /></td>
+        <td><input type="radio" value="1" name="wert-stimme-2" /></td>
+        <td><input type="radio" value="1" name="wert-stimme-3" /></td>
+      </tr>
+      <tr>
+        <th class="desc">Zwölftonreihe (Mon. 1)</th>
+        <td><input type="radio" value="2" name="wert-stimme-0" /></td>
+        <td><input type="radio" value="2" name="wert-stimme-1" /></td>
+        <td><input type="radio" value="2" name="wert-stimme-2" /></td>
+        <td><input type="radio" value="2" name="wert-stimme-3" /></td>
+      </tr>
+      <tr>
+        <th class="desc">Monophonoie 2</th>
+        <td><input type="radio" value="3" name="wert-stimme-0" /></td>
+        <td><input type="radio" value="3" name="wert-stimme-1" /></td>
+        <td><input type="radio" value="3" name="wert-stimme-2" /></td>
+        <td><input type="radio" value="3" name="wert-stimme-3" /></td>
+      </tr>
+      <tr>
+        <th class="desc">Monophonoie 3</th>
+        <td><input type="radio" value="4" name="wert-stimme-0" /></td>
+        <td><input type="radio" value="4" name="wert-stimme-1" /></td>
+        <td><input type="radio" value="4" name="wert-stimme-2" /></td>
+        <td><input type="radio" value="4" name="wert-stimme-3" /></td>
+      </tr>
+      <tr>
+        <th class="desc">Monophonoie 4</th>
+        <td><input type="radio" value="5" name="wert-stimme-0" /></td>
+        <td><input type="radio" value="5" name="wert-stimme-1" /></td>
+        <td><input type="radio" value="5" name="wert-stimme-2" /></td>
+        <td><input type="radio" value="5" name="wert-stimme-3" /></td>
+      </tr>
+      <tr>
+        <th class="desc">Monophonoie 5</th>
+        <td><input type="radio" value="6" name="wert-stimme-0" /></td>
+        <td><input type="radio" value="6" name="wert-stimme-1" /></td>
+        <td><input type="radio" value="6" name="wert-stimme-2" /></td>
+        <td><input type="radio" value="6" name="wert-stimme-3" /></td>
+      </tr>
+      <tr>
+        <th class="desc">Kontinuum Arpeggio</th>
+        <td><input type="radio" value="7" name="wert-stimme-0" /></td>
+        <td><input type="radio" value="7" name="wert-stimme-1" /></td>
+        <td><input type="radio" value="7" name="wert-stimme-2" /></td>
+        <td><input type="radio" value="7" name="wert-stimme-3" /></td>
+      </tr>
+      <tr>
+        <th class="desc">Kontinuum Arpeggio kurz</th>
+        <td><input type="radio" value="8" name="wert-stimme-0" /></td>
+        <td><input type="radio" value="8" name="wert-stimme-1" /></td>
+        <td><input type="radio" value="8" name="wert-stimme-2" /></td>
+        <td><input type="radio" value="8" name="wert-stimme-3" /></td>
       </tr>
     </table>
-    
-    <section>
-    <table>
+
+    <table id="spiel">
       <tr>
-        <th>Akkordkrebs:</th><td><span id="wert-akkordkrebs">Nein</span></td>
+        <th><label for="wert-akkordkrebs">Akkordkrebs:</label></th><td><input type="checkbox" value="0" id="wert-akkordkrebs" name="wert-akkordkrebs" /></td>
       </tr>
       <tr>
-        <th>Umkehrung:</th><td> <span id="wert-umkehrung">0</span></td>
+        <th><label for="wert-umkehrung">Umkehrung:</label></th>
+        <td>
+          <select name="wert-umkehrung" id="wert-umkehrung">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+          </select>
+        </td>
       </tr>
       <tr>
-        <th>Transposition:</th><td>+<span id="wert-transposition">0</span></td>
+        <th><label for="wert-transposition">Transposition:</label></th>
+          <td>
+            <select name="wert-transposition" id="wert-transposition">
+              <option value="0">+0</option>
+              <option value="1">+1</option>
+              <option value="2">+2</option>
+              <option value="3">+3</option>
+              <option value="4">+4</option>
+              <option value="5">+5</option>
+              <option value="6">+6</option>
+              <option value="7">+7</option>
+              <option value="8">+8</option>
+              <option value="9">+9</option>
+              <option value="10">+10</option>
+              <option value="11">+11</option>
+            </select>
+          </td>
       </tr>
     </table>    
-    </section>
-    
-    <!-- <section>
-    Umkehrung: <span id="wert-umkehrung">0</span><br>
-    Akkordkrebs: <span id="wert-akkordkrebs">Nein</span><br>
-    Transposition: <span id="wert-transposition">0</span><br>
-    </section>   -->       
+    </section>       
   </div>  
   <script src="gui/js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>  
   <script src="gui/js/raphael-min.js" type="text/javascript" charset="utf-8"></script>

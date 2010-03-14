@@ -15,6 +15,8 @@ module Hauer
     end
   end
   
+  # FIXME add channel attribute ??
+  
   class MidiNote < Struct.new(:pitch, :value, :velocity, :offset)
 
     def <=>(other)

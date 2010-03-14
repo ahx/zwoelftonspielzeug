@@ -184,8 +184,8 @@ class TestZwoelftonspiel < Test::Unit::TestCase
   
   class Obs
     attr :updated, :last_changed, :last_value, :last_origin
-    def update(attribute, value, origin)
-      @last_changed, @last_value, @last_origin = attribute, value, origin
+    def update(origin, event, data)
+      @last_changed, @last_value, @last_origin = data.keys.last, data.values.last, origin
       @updated ||= 0
       @updated += 1
     end

@@ -14,8 +14,7 @@ module Zwoelftonspielzeug
   class Automat
     include Observable
     include Hauer::Notation
-    attr :spiel
-    attr :scheduler
+    attr :spiel, :scheduler
     # NOTE Wenn stimme direkt per stimme[x]= verändert wird gibts keinen Event!
     attr :stimmen
     attr :proxy
@@ -38,6 +37,7 @@ module Zwoelftonspielzeug
     end
 
     def start(tempo = 80)
+      
       @scheduler = Gamelan::Scheduler.new :tempo => tempo
       zwoelfschlag(0)
       @scheduler.run
@@ -46,14 +46,14 @@ module Zwoelftonspielzeug
     # Gibt je nach Wert eine Melodievariante / Klangreihe zurück
     def stimmvariation(num)
       {  
-        0 => @proxy.klangreihe,      
-        1 => @proxy.melodie(:gattung => 1),
-        2 => @proxy.melodie(:gattung => 2),
-        3 => @proxy.melodie(:gattung => 3),
-        4 => @proxy.melodie(:gattung => 4),
-        5 => @proxy.melodie(:gattung => 5),        
-        6 => proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?) },
-        7 => proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?, :arp => 0.1) }
+        1 => @proxy.klangreihe,      
+        2 => @proxy.melodie(:gattung => 1),
+        3 => @proxy.melodie(:gattung => 2),
+        4 => @proxy.melodie(:gattung => 3),
+        5 => @proxy.melodie(:gattung => 4),
+        6 => @proxy.melodie(:gattung => 5),        
+        7 => proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?) },
+        8 => proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?, :arp => 0.1) }
       }[num]
     end
     
@@ -61,7 +61,7 @@ module Zwoelftonspielzeug
       @stimmen[stimmen_id] = stimmvariation(varianten_id)
       key = "stimme-#{stimmen_id}".to_sym
       changed      
-      notify_observers(key , @stimmen[stimmen_id] ? varianten_id : nil , self)
+      notify_observers(self, :update, key.to_sym => @stimmen[stimmen_id] ? varianten_id : nil)
     end
     
     # Stop bei nächsten Zwölfschlag
@@ -80,6 +80,7 @@ module Zwoelftonspielzeug
       return quit! if @stop
       stimmen_schedulen!(zeit)      
       neustart_zwoelfschlag(zeit)
+      schedule_metrum_broadcast(zeit)
     end
     
     def stimmen_schedulen!(start)
@@ -102,7 +103,11 @@ module Zwoelftonspielzeug
     end        
     
     def play_note(time_in_beats, note, channel)
-      @scheduler.at(time_in_beats + note.offset) { @ausgang.note_on(note.pitch, channel, note.velocity) }
+      @scheduler.at(time_in_beats + note.offset) { 
+        @ausgang.note_on(note.pitch, channel, note.velocity) 
+        # FIXME DRY
+        @websocket.broadcast(:type => :note, :data => {:pitch => note.pitch, :channel => channel, :velocity => note.velocity})
+      }
       # 0 bei note_off (s.o.)
       @scheduler.at(time_in_beats + note.offset + note.value) { @ausgang.note_off(note.pitch, channel, 0) }    
     end
@@ -118,6 +123,15 @@ module Zwoelftonspielzeug
         play_note(beat_offset, note, channel)
         note.value + note.offset
       end
+    end
+    
+    def schedule_metrum_broadcast(start)
+      12.times {|t|
+        zeit = start + @spiel.takt.laenge * t
+        @scheduler.at(zeit) { 
+          @websocket.broadcast(:type => :metrum, :data => {:beat_index => t})
+        }
+      }
     end
   end
   

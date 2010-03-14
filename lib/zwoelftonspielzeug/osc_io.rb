@@ -26,6 +26,8 @@ module Zwoelftonspielzeug
   # Empfängt Eingaben vom MIDI Controller.
   # Bei MVC wäre das hier ein Controller    
   class OSCInput
+    attr :eingang
+    
     def initialize(zeug, port)
       @zeug = zeug
       @eingang = OSC::EMServer.new( port )

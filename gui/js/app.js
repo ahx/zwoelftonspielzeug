@@ -1,20 +1,24 @@
 // Get chrome
 if(typeof(WebSocket) == "undefined") {
-  alert("Ihr Browser unterstützt keine Websockets. Bitte benutzen Sie Google Chrome.");
-  window.location.replace("http://www.google.com/chrome/");
+  if(confirm("Ihr Browser unterstützt keine Websockets. \nBesorgen Sie sich jetzt Google Chrome."))
+    window.location.replace("http://www.google.com/chrome/");
 }
 
 var ws;
 // The thing
 var zwoelftonspielzeug = {
-  init: function() {
-    this.zyklus = Raphael("zyklus", 650, 385);      
+  beat_index: 0,
+  
+  init: function(data) {
+    this.data = data;
+    this.zyklus = Raphael("zyklus", 650, 390);      
     this.drawCycle();
+    // this.noten = Raphael("noten", 650, 150); 
   },
       
   drawCycle: function() {
     var r = this.zyklus;
-    // r.clear();
+    r.clear();
     var colors = [
     "#EDAA47",
     "#7C4E72",
@@ -72,36 +76,51 @@ var zwoelftonspielzeug = {
     });  
   },
   
+  trigger: function(event, data) {    
+    if(this[event]) this[event](data);
+  },
+  
   update: function(data) {
-    var value = data.value;
-    // Unterschiedliche Formatierung, je nach key…
-    if( data.key == 'akkordkrebs') value = data.value ? 'Ja' : 'Nein';
-    if( data.key.match("stimme")) {
-      if(!value && value !== 0) value = "x";
+    for (var attr in data)  {      
+      this.data[attr] = data[attr];   // store data
+      switch(attr) {
+        case 'akkordkrebs':
+          $('input[name=wert-akkordkrebs]').attr('checked', data[attr]);
+          break;
+        case 'reihe':
+          this.drawCycle();
+          break;
+        case 'umkehrung':
+        case 'transposition':
+          $('select[name=wert-'+attr+'] option[value='+data[attr]+']').attr('selected', true);      
+          break;
+        default:
+          if( attr.match("stimme")) {
+            $('input[name=wert-'+attr+'][value='+(data[attr] || 'off')+']').click();
+          } 
+      }
     }
-    if( data.key == 'reihe') {    
-      this.drawCycle();
-      return;
-    }
-    // Tu es!
-    $("#wert-"+data.key).html(value);
+  },
+  
+  metrum: function(data) {
+    // console.log(data.beat_index);
+    // this.beat_index = data.beat_index;
+    // if(data.beat_index == 0)
+      // this.noten.clear();
+    // $("h1").toggle(); 
+    // TODO Aktuellen Schlag anzeigen
+  },
+  
+  kontinuum: function(note) {
+    // this.noten.circle((this.noten.width/12*this.beat_index), this.noten.height/12*(note.pitch % 12), 10).attr({fill: Raphael.getColor() })
   }
 }
 
 $(document).ready(function(){
   ws = new WebSocket("ws://localhost:7779/");
   ws.onmessage = function(evt) { 
-    var data = JSON.parse(evt.data)
-    // consoles.log(daxta);
-    switch(data.type) {
-      case 'init':
-        zwoelftonspielzeug.data = data.data;
-        zwoelftonspielzeug.init();
-      break;
-      case 'update':
-        zwoelftonspielzeug.update(data);
-      break;
-    }
+    var event = JSON.parse(evt.data)
+    zwoelftonspielzeug.trigger(event.type, event.data);
   };
   ws.onclose = function() { 
     if(confirm("Bitte Zwölftonspielzeug (start) starten.")){      

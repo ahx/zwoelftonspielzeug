@@ -11,7 +11,7 @@ module ObservableAccessor
       define_method("#{ace}=") { |new_value|
         instance_variable_set("@#{ace}", new_value)
         changed
-        notify_observers(ace, new_value, self)
+        notify_observers(self, :update, ace.to_sym => new_value)
       }
     
     end

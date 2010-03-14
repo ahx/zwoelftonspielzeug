@@ -6,7 +6,7 @@ body {
   color: #191919;
   font-style: normal;
   font-size: 18px;
-  line-height: 120%;
+  line-height: 110%;
 }
 header {
   text-align: center;
@@ -16,32 +16,54 @@ header h1 {
 /*  font-family: "Didot", serif;*/
 }
 section {
-  margin: 30px 0px;
+  margin: 25px 0 10px 0;
 }
 td, th {
   padding: 2px 5px;
 }
-
-th {
-  text-align: left;
+input[type=radio] {
+  size: 200%;
 }
-
+table .desc {
+  font-size: 12px;
+  text-align: right;
+  color: #4C4C4C;
+}
 #page {  
   box-shadow:         1px 2px 3px 1px #232323;
   -moz-box-shadow:    1px 2px 3px 1px #232323;
   -webkit-box-shadow: 1px 2px 3px 1px #232323;
   background-color: #F9F7E7;
-  padding: 35px 50px 50px 50px;  
-/*  text-align: center;*/
+  padding: 30px 50px 10px 50px;  
   width: 680px;
-/*  min-height: 600px;*/
   margin: 0 auto;
-  margin-top: 10px;
-}
-#stimmen { 
+  margin-top: 5px;
 }
 #zyklus {
   min-height: 380px;
 }
+#eigenschaften {   
+  position: relative;
+}
+table#stimmen {
+  line-height: 90%;
+}
+table#stimmen tr + tr {
+/*  background-color: #999;*/
+  border-bottom: 1px solid #CCC;
+  text-align: center;
+}
+#spiel {
+  display: block;
+  position: absolute;
+  width: 300px;  
+  height: 200px;
+  top: 0px;
+  left: 400px;  
+}
+#spiel th {
+  text-align: right;
+}
+
 
 
