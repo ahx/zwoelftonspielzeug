@@ -35,9 +35,10 @@ include Hauer::Utils
 # @stimmen[3] = proc { Hauer::Arpeggiator.arpeggio!(@spiel.klangreihe, :reverse => @spiel.akkordkrebs?) } #, :arp => 0.1
 # @spiel.akkordkrebs = true
 # @spiel.umkehrung = 2 
-@a.stimmvariation!(:sopran, 1)
+@a.stimmvariation!(:sopran, 2)
 
 puts `open #{File.expand_path(File.dirname(__FILE__))}/pd/start.pd`
+# puts `open #{File.expand_path(File.dirname(__FILE__))}/index.html`
 puts '...'
 system 'clear'
 puts <<HILFE
@@ -53,9 +54,9 @@ puts <<HILFE
     spiel.reihe = #{@spiel.reihe.inspect}
   
 HILFE
-puts "Drücke die ↵ [Enter] Taste oder gebe vorher ein neues Tempo (jetzt: 80) ein um zu starten."
+puts "Drücke die ↵ [Enter] Taste oder gebe vorher ein neues Tempo (jetzt: 70) ein um zu starten."
 tempo = gets.to_i
-tempo = tempo > 0 ? tempo : 80
+tempo = tempo > 0 ? tempo : 70
 puts "䷎"
 puts "'q' um das Spiel zu beenden."
 
