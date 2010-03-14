@@ -29,11 +29,14 @@ module Zwoelftonspielzeug
             @channel.subscribe { |msg| ws.send msg }             
             }
           ws.onmessage { |msg| 
-            return unless msg == 'hello'
+            return unless msg == 'init'
             ws.send({   
               :type => :init,           
               :data => {                
-                :reihe => @zeug.spiel.reihe
+                :reihe => @zeug.spiel.reihe,
+                :umkehrung => @zeug.spiel.umkehrung,
+                :akkordkrebs => @zeug.spiel.akkordkrebs?,
+                :transposition => @zeug.spiel.transposition                
               }
             }.to_json)
           }

@@ -5,15 +5,14 @@ if(typeof(WebSocket) == "undefined") {
 }
 
 var ws;
-// The thing
 var zwoelftonspielzeug = {
   beat_index: 0,
+  data: {},
   
-  init: function(data) {
-    this.data = data;
-    this.zyklus = Raphael("zyklus", 650, 390);      
-    this.drawCycle();
+  init: function(data) {    
+    this.zyklus = Raphael("zyklus", 650, 390);
     // this.noten = Raphael("noten", 650, 150); 
+    this.update(data);
   },
       
   drawCycle: function() {
@@ -124,12 +123,12 @@ $(document).ready(function(){
   };
   ws.onclose = function() { 
     if(confirm("Bitte Zwölftonspielzeug (start) starten.")){      
-    window.location.reload();
+      window.location.reload();
     } else {
-    window.close();  
+      window.close();  
     }
   };
   ws.onopen = function(evt) {  
-    ws.send("hello"); 
+    ws.send("init"); 
   };
 });
