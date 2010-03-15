@@ -1,6 +1,6 @@
 Zwölftonspielzeug 
 ------------------
-Frei nach den Erkenntnissen von Joseph Matthias Hauer, dem Entdecker der Zwölftonmusik.
+Frei nach den Erkenntnissen von Josef Matthias Hauer, dem Entdecker der Zwölftonmusik.
 
 
 So geht's:

@@ -1,5 +1,5 @@
 # encoding: UTF-8
-# Ein Zwölftonspielgenerator (nach Joseph Matthias Hauer)
+# Ein Zwölftonspielgenerator (nach Josef Matthias Hauer)
 # Language: German
 
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/..'
@@ -9,7 +9,7 @@ require 'hauer/notation'
 # TODO Schlusston bei Akkordkrebs noch mal Nachschlagen
 # TODO Lambdoma, Stimmvertauschung (?)
 
-# Joseph Matthias Hauer ist der ursprüngliche Erfinder der Zwölftonmusik
+# Josef Matthias Hauer ist der ursprüngliche Erfinder der Zwölftonmusik
 module Hauer
   module Lint
     def reihe_ok?(reihe)
