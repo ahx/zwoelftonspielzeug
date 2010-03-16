@@ -16,7 +16,11 @@ var zwoelftonspielzeug = {
       
   drawCycle: function() {
     var r = this.zyklus;
-    r.clear();
+    try {
+      r.clear();
+    } catch(err) {
+      // fail silently
+    }    
     var colors = [
     "#EDAA47",
     "#7C4E72",

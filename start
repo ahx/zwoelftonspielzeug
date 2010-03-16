@@ -1,14 +1,12 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
-
-# FIXME Use Bundler
-# begin
-#   require File.expand_path('../.bundle/environment', __FILE__)
-# rescue LoadError
-#   require "rubygems"
-#   require "bundler"
-#   Bundler.setup
-# end
+begin
+  require File.expand_path('../.bundle/environment', __FILE__)
+rescue LoadError
+  require "rubygems" if RUBY_VERSION < '1.9'
+  require "bundler"
+  Bundler.setup
+end
 
 require File.dirname(__FILE__) + '/lib/zwoelftonspielzeug'
 include Hauer::Utils
@@ -56,7 +54,7 @@ puts <<HILFE
 HILFE
 puts "Drücke die ↵ [Enter] Taste oder gebe vorher ein neues Tempo (jetzt: 70) ein um zu starten."
 tempo = gets.to_i
-tempo = tempo > 0 ? tempo : 70
+tempo = tempo.to_i > 0 ? tempo : 70
 puts "䷎"
 puts "'q' um das Spiel zu beenden."
 
