@@ -23,4 +23,4 @@ Start
   * Alternativ zum MIDI Controller, kann die Anwendung auch über die index.html gesteuert werden.
 
 
-Von Andreas Haller <andreashaller@gmail.com>
+Von Andreas Haller
